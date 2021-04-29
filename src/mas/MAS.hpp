@@ -157,7 +157,7 @@ namespace mas {
 
                 variable::tape.recording = true;
                 variable::tape.derivative_trace_level = atl::DYNAMIC_RECORD;
-                
+                variable::tape.stack_current = 0;
                 for (mit = info.movement_models.begin(); mit != info.movement_models.end(); ++mit) {
                     (*mit).second->Prepare();
                 }
@@ -252,7 +252,7 @@ namespace mas {
                 //            std::cout<<"recruitment_likelihood = "<<this->recruitment_likelihood<<"\n";
                 f = this->nll_fleets + this->nll_surveys + this->recruitment_likelihood + this->selectivity_likelihood;
 
-                this->first_evaluation = false;
+                this->first_evaluation = true;
             } else {
 
                 for (int i = 0; i < this->f_calculation_tape_break; i++) {
