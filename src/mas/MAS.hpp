@@ -249,6 +249,7 @@ namespace mas {
 
                 //            std::cout<<"recruitment_likelihood = "<<this->recruitment_likelihood<<"\n";
                 f = this->nll_fleets + this->nll_surveys + this->recruitment_likelihood + this->selectivity_likelihood;
+                
                 this->first_evaluation = false;
             } else {
 
@@ -276,7 +277,7 @@ namespace mas {
                 std::valarray<REAL_T>&g, REAL_T & maxgc) {
             g.resize(p.size());
             atl::Variable<REAL_T>::tape.DynamicReverse();
-
+            std::cout<<"COMPUTING GRADIENT"<<std::endl;
             for (int i = 0; i < g.size(); i++) {
                 g[i] = atl::Variable<REAL_T>::tape.Value(p[i]->info->id);
                 if (i == 0) {
