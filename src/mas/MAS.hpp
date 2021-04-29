@@ -286,7 +286,7 @@ namespace mas {
                 }
             }
         }
-    }
+    
 
     void RunOperationalModel() {
         this->catch_biomass_component = 0.0;
