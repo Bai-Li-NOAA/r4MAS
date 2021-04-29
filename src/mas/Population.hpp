@@ -408,7 +408,7 @@ namespace mas {
 
         }
 
-        inline REAL_T CalculateUnfishedSpawningBiomassPerRecruit() {
+        inline variable CalculateUnfishedSpawningBiomassPerRecruit() {
 
 
             std::vector<variable > sb_per_recruit(this->years);
@@ -449,7 +449,7 @@ namespace mas {
 
             variable ret = sb_per_recruit[this->years - 1];
 
-            return ret.GetValue();
+            return ret;
         }
 
         inline REAL_T CalculateFishedSpawningBiomassPerRecruit_(REAL_T F) {
