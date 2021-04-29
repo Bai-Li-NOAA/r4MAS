@@ -253,9 +253,10 @@ namespace mas {
                 f = this->nll_fleets + this->nll_surveys + this->recruitment_likelihood + this->selectivity_likelihood;
 
                 this->first_evaluation = false;
+                std::cout<<"DEvaluate ";
             } else {
                 std::cout<<"Evaluate ";
-                for (int i = 0; i < this->f_calculation_tape_break; i++) {
+                for (int i = 0; i <  variable::tape.stack_current; i++) {
                     variable::tape.stack[i].w->value = 0.0;
                 }
                 for (int i = 0; i < this->f_calculation_tape_break; i++) {
