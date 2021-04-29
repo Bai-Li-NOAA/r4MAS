@@ -275,7 +275,7 @@ namespace mas {
                     variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
                     mas_log << i << " = " << variable::tape.stack[i].w->value <<" "<<variable::tape.stack[i].exp->ToString() << std::endl;
                 }
-
+                exit();
                 f.info = variable::tape.stack[variable::tape.stack_current - 1].w;
                 std::cout << f << "<----" << std::endl;
             }
