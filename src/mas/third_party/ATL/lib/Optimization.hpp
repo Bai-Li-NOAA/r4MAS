@@ -2144,8 +2144,8 @@ namespace atl {
 
 
                     atl::Variable<T>::SetRecording(true);
-                    atl::Variable<T>::tape.Reset();
-                    atl::Variable<T>::tape.derivative_trace_level = atl::FIRST_ORDER_REVERSE;
+//                    atl::Variable<T>::tape.Reset();
+//                    atl::Variable<T>::tape.derivative_trace_level = atl::FIRST_ORDER_REVERSE;
                     if (inner) {
                         this->CallInnerObjectiveFunction(fx);
                     } else {
