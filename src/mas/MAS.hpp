@@ -272,10 +272,10 @@ namespace mas {
         void virtual ComputeGradient(std::vector<atl::Variable<REAL_T>* >&p,
                 std::valarray<REAL_T>&g, REAL_T & maxgc) {
             g.resize(p.size());
-            atl::Variable<T>::tape.DynamicReverse();
+            atl::Variable<REAL_T>::tape.DynamicReverse();
 
             for (int i = 0; i < g.size(); i++) {
-                g[i] = atl::Variable<T>::tape.Value(p[i]->info->id);
+                g[i] = atl::Variable<REAL_T>::tape.Value(p[i]->info->id);
                 if (i == 0) {
                     maxgc = std::fabs(g[i]);
                 } else {
