@@ -683,7 +683,6 @@ namespace atl {
                     index = 0;
                     for (vit = this->stack[i].ids.begin(); vit != this->stack[i].ids.end(); ++vit) {
                         this->first_order_derivatives[(*vit)->id] += w * this->stack[i].exp->EvaluateDerivative((*vit)->id);
-                        std::cout<<this->first_order_derivatives[(*vit)->id]<<"+="<<w<<"*"<< this->stack[i].exp->EvaluateDerivative((*vit)->id)<<std::endl;
                         index++;
                     }
 
