@@ -1537,6 +1537,9 @@ namespace mas {
                     ss.str("");
                     ss << "spawning_numbers_at_age" << "[" << index << "]";
                     this->spawning_numbers_at_age[index].SetName(ss.str());
+                    ss.str("");
+                    ss << "fecundity_at_age" << "[" << index << "]";
+                    this->fecundity_at_age[index].SetName(ss.str());
                     //spawning numbers at age
                     this->equilibrium_to_survival_at_spawning[index] =
                             mas::exp(static_cast<REAL_T> (-1.0) * this->spawning_season_offset * Z[index]);
