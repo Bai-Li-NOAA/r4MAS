@@ -186,13 +186,13 @@ namespace mas {
                 }
 
                 this->f_calculation_tape_break = variable::tape.stack_current;
-//                variable::tape.recording = false;
-//
-//                for (it = pops.begin(); it != pops.end(); ++it) {
-//                    (*it).second->FCalc();
-//                }
-//
-//                variable::tape.recording = true;
+                variable::tape.recording = false;
+
+                for (it = pops.begin(); it != pops.end(); ++it) {
+                    (*it).second->FCalc();
+                }
+
+                variable::tape.recording = true;
 
                 for (it = pops.begin(); it != pops.end(); ++it) {
                     (*it).second->InitializePopulationinAreasPostFCalc();
@@ -258,18 +258,17 @@ namespace mas {
                 for (int i = 0; i < this->f_calculation_tape_break; i++) {
                     variable::tape.stack[i].w->value = 0.0;
                 }
-//                for (int i = 0; i < this->f_calculation_tape_break; i++) {
-//                    variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
-//                    std::cout << i << " = " << variable::tape.stack[i].w->value << std::endl;
-//                }
-//
-//                /**
-//                 * Evaluate each population and push final numbers to
-//                 * Area, fleet, and survey objects.
-//                 */
-//                for (it = pops.begin(); it != pops.end(); ++it) {
-//                    (*it).second->FCalc();
-//                }
+                for (int i = 0; i < this->f_calculation_tape_break; i++) {
+                    variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
+                }
+
+                /**
+                 * Evaluate each population and push final numbers to
+                 * Area, fleet, and survey objects.
+                 */
+                for (it = pops.begin(); it != pops.end(); ++it) {
+                    (*it).second->FCalc();
+                }
 
                 for (int i = 0; i < variable::tape.stack_current; i++) {
                     variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
