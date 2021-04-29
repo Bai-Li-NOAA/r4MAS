@@ -3075,6 +3075,11 @@ namespace atl {
         
         VariableDynamic() {
         }
+        
+           VariableDynamic(std::shared_ptr<atl::VariableInfo<REAL_T> > info) :
+        info(info) {
+          
+        }
 
         VariableDynamic(std::shared_ptr<atl::VariableInfo<REAL_T> > info,std::string name) :
         info(info) {
