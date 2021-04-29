@@ -135,22 +135,22 @@ namespace mas {
             //                (*ait).second->Prepare();
             //            }
 
-                            /**
-                 * Prepare Populations for evaluation. Resets runtime
-                 * information.
-                 */
-                for (it = pops.begin(); it != pops.end(); ++it) {
-                    //                (*it).second->phase = *phase;
-                    (*it).second->Prepare();
-                }
+            /**
+             * Prepare Populations for evaluation. Resets runtime
+             * information.
+             */
+            for (it = pops.begin(); it != pops.end(); ++it) {
+                //                (*it).second->phase = *phase;
+                (*it).second->Prepare();
+            }
 
-                for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-                    (*sit).second->Prepare();
-                }
+            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+                (*sit).second->Prepare();
+            }
 
-                for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-                    (*fit).second->Prepare();
-                }
+            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+                (*fit).second->Prepare();
+            }
 
 
             if (this->first_evaluation) {
@@ -250,12 +250,16 @@ namespace mas {
 
                 //            std::cout<<"recruitment_likelihood = "<<this->recruitment_likelihood<<"\n";
                 f = this->nll_fleets + this->nll_surveys + this->recruitment_likelihood + this->selectivity_likelihood;
-                
+
                 this->first_evaluation = false;
             } else {
 
                 for (int i = 0; i < this->f_calculation_tape_break; i++) {
+                    variable::tape.stack[i].w->value = 0.0;
+                }
+                for (int i = 0; i < this->f_calculation_tape_break; i++) {
                     variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
+
                 }
 
                 /**
@@ -270,12 +274,10 @@ namespace mas {
                     variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
                 }
 
-                f.info = variable::tape.stack[variable::tape.stack_current-1].w;
-                std::cout<<f<<"<----"<<std::endl;
+                f.info = variable::tape.stack[variable::tape.stack_current - 1].w;
+                std::cout << f << "<----" << std::endl;
             }
         }
-
-
 
         void RunOperationalModel() {
             this->catch_biomass_component = 0.0;
@@ -376,7 +378,7 @@ namespace mas {
                 info.data_dictionary[(*sit).second->id].push_back((*sit).second->survey_proportion_at_age_data);
 
             }
-            
+
         }
 
         /**
