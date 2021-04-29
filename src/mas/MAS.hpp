@@ -269,27 +269,11 @@ namespace mas {
                     variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
                 }
 
-                //                f.SetValue()
+                f.info = variable::tape.stack[variable::tape.stack_current-1].w;
             }
         }
 
-        void virtual ComputeGradient(std::vector<atl::Variable<REAL_T>* >&p,
-                std::valarray<REAL_T>&g, REAL_T & maxgc) {
-            g.resize(p.size());
-            atl::Variable<REAL_T>::tape.DynamicReverse();
-            std::cout<<"COMPUTING GRADIENT"<<std::endl;
-            for (int i = 0; i < g.size(); i++) {
-                g[i] = atl::Variable<REAL_T>::tape.Value(p[i]->info->id);
-                if (i == 0) {
-                    maxgc = std::fabs(g[i]);
-                } else {
-                    if (std::fabs(g[i]) > maxgc) {
 
-                        maxgc = std::fabs(g[i]);
-                    }
-                }
-            }
-        }
 
         void RunOperationalModel() {
             this->catch_biomass_component = 0.0;
@@ -390,7 +374,7 @@ namespace mas {
                 info.data_dictionary[(*sit).second->id].push_back((*sit).second->survey_proportion_at_age_data);
 
             }
-
+            
         }
 
         /**
