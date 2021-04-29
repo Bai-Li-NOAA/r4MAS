@@ -263,7 +263,7 @@ namespace mas {
                  * Area, fleet, and survey objects.
                  */
                 for (it = pops.begin(); it != pops.end(); ++it) {
-                    (*it).second->Evaluate();
+                    (*it).second->FCalc();
                 }
 
                 for (int i = this->f_calculation_tape_break; i < variable::tape.stack_current; i++) {
