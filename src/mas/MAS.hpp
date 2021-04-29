@@ -135,6 +135,23 @@ namespace mas {
             //                (*ait).second->Prepare();
             //            }
 
+                            /**
+                 * Prepare Populations for evaluation. Resets runtime
+                 * information.
+                 */
+                for (it = pops.begin(); it != pops.end(); ++it) {
+                    //                (*it).second->phase = *phase;
+                    (*it).second->Prepare();
+                }
+
+                for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+                    (*sit).second->Prepare();
+                }
+
+                for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+                    (*fit).second->Prepare();
+                }
+
 
             if (this->first_evaluation) {
 
@@ -161,22 +178,6 @@ namespace mas {
                 //                (*ait).second->Prepare();
                 //            }
 
-                /**
-                 * Prepare Populations for evaluation. Resets runtime
-                 * information.
-                 */
-                for (it = pops.begin(); it != pops.end(); ++it) {
-                    //                (*it).second->phase = *phase;
-                    (*it).second->Prepare();
-                }
-
-                for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-                    (*sit).second->Prepare();
-                }
-
-                for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-                    (*fit).second->Prepare();
-                }
 
 
                 for (it = pops.begin(); it != pops.end(); ++it) {
