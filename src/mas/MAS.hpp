@@ -259,7 +259,7 @@ namespace mas {
                 }
                 for (int i = 0; i < this->f_calculation_tape_break; i++) {
                     variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
-
+                    std::cout << i << " = " << variable::tape.stack[i].w->value << std::endl;
                 }
 
                 /**
@@ -272,6 +272,7 @@ namespace mas {
 
                 for (int i = this->f_calculation_tape_break; i < variable::tape.stack_current; i++) {
                     variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
+                    std::cout << i << " = " << variable::tape.stack[i].w->value << std::endl;
                 }
 
                 f.info = variable::tape.stack[variable::tape.stack_current - 1].w;
