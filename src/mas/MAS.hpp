@@ -157,6 +157,7 @@ namespace mas {
 
                 variable::tape.recording = true;
                 variable::tape.derivative_trace_level = atl::DYNAMIC_RECORD;
+                
                 for (mit = info.movement_models.begin(); mit != info.movement_models.end(); ++mit) {
                     (*mit).second->Prepare();
                 }
@@ -185,13 +186,13 @@ namespace mas {
                 }
 
                 this->f_calculation_tape_break = variable::tape.stack_current;
-                variable::tape.recording = false;
-
-                for (it = pops.begin(); it != pops.end(); ++it) {
-                    (*it).second->FCalc();
-                }
-
-                variable::tape.recording = true;
+//                variable::tape.recording = false;
+//
+//                for (it = pops.begin(); it != pops.end(); ++it) {
+//                    (*it).second->FCalc();
+//                }
+//
+//                variable::tape.recording = true;
 
                 for (it = pops.begin(); it != pops.end(); ++it) {
                     (*it).second->InitializePopulationinAreasPostFCalc();
