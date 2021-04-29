@@ -3071,13 +3071,14 @@ namespace atl {
     struct VariableDynamic : DynamicExpressionBase<REAL_T> {
         std::shared_ptr<atl::VariableInfo<REAL_T> > info;
         //        static util::MemoryPool<VariableDynamic<REAL_T> > pool;
-
+        std::string name;
+        
         VariableDynamic() {
         }
 
-        VariableDynamic(std::shared_ptr<atl::VariableInfo<REAL_T> > info) :
+        VariableDynamic(std::shared_ptr<atl::VariableInfo<REAL_T> > infostd::string name) :
         info(info) {
-
+            this->name = name;S
         }
 
         VariableDynamic(const VariableDynamic<REAL_T>& other) :
@@ -3137,7 +3138,7 @@ namespace atl {
 
         const std::string ToString() const {
             std::stringstream ss;
-            ss << "variable[" << info->id << "," << info->value << "]";
+            ss << "variable["<< name <<","<< info->id << "," << info->value << "]";
             return ss.str();
         }
 
