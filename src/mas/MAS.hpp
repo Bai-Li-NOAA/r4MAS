@@ -269,8 +269,8 @@ namespace mas {
             }
         }
 
-        void virtual ComputeGradient(std::vector<atl::Variable<T>* >&p,
-                std::valarray<T>&g, T & maxgc) {
+        void virtual ComputeGradient(std::vector<atl::Variable<REAL_T>* >&p,
+                std::valarray<REAL_T>&g, REAL_T & maxgc) {
             g.resize(p.size());
             atl::Variable<T>::tape.DynamicReverse();
 
