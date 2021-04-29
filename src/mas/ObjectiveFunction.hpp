@@ -56,10 +56,10 @@ namespace mas {
         }
 
         virtual void Finalize() {
-           
+
             this->SetVarianceCovariance();
             mas_instance.Finalize();
-//            mas_instance.Report();
+            //            mas_instance.Report();
             mas::JSONOutputGenerator<REAL_T> json;
             std::ofstream output(this->ouput_path.data());
             output << json.GenerateOutput(mas_instance);
@@ -145,7 +145,22 @@ namespace mas {
             mas_instance.Run(f);
         }
 
+        void virtual ComputeGradient(std::vector<atl::Variable<REAL_T>* >&p,
+                std::valarray<REAL_T>&g, REAL_T & maxgc) {
+            g.resize(p.size());
+            atl::Variable<REAL_T>::tape.DynamicReverse();
+            for (int i = 0; i < g.size(); i++) {
+                g[i] = atl::Variable<REAL_T>::tape.Value(p[i]->info->id);
+                if (i == 0) {
+                    maxgc = std::fabs(g[i]);
+                } else {
+                    if (std::fabs(g[i]) > maxgc) {
 
+                        maxgc = std::fabs(g[i]);
+                    }
+                }
+            }
+        }
 
     };
 
