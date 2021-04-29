@@ -672,7 +672,7 @@ namespace mas {
             //            variable sigma_r = this->recruitment_model->sigma_r;
             int a;
             for (a = 0; a < this->ages.size(); a++) {
-                sts::stringstream ss;
+                std::stringstream ss;
                 ss<<"initial_numbers"<<"["<<a<<"]";
                 mas_log<<ss.str()<<std::endl;
                       
