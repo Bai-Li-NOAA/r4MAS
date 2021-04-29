@@ -1063,10 +1063,10 @@ namespace mas {
             } else {
                 if (season == this->spawning_season) {
                     //previous year spawning biomass
-                    variable sb = this->spawning_stock_biomass[(year - 1) * seasons + (season - 1)];
+//                    variable sb = this->spawning_stock_biomass[(year - 1) * seasons + (season - 1)];
 
                     this->recruitment[year * seasons + (season - 1)] =
-                            static_cast<REAL_T> (this->sex_fraction_value) * this->recruitment_model->Evaluate(this->id, this->area->id, sb) *
+                            static_cast<REAL_T> (this->sex_fraction_value) * this->recruitment_model->Evaluate(this->id, this->area->id, this->spawning_stock_biomass[(year - 1) * seasons + (season - 1)]) *
                             mas::exp(this->recruitment_model->bias_correction + //either 0.0 or -0.5*sigma_r^2
                             this->recruitment_model->recruitment_deviations[year * seasons + (season - 1)]);
 
