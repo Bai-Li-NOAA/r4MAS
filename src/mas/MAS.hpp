@@ -165,10 +165,10 @@ namespace mas {
                 for (rit = info.recruitment_models.begin(); rit != info.recruitment_models.end(); rit++) {
                     (*rit).second->Prepare();
                 }
-                //
-                for (selex_it = info.selectivity_models.begin(); selex_it != info.selectivity_models.end(); selex_it++) {
-                    (*selex_it).second->Update(this->info.ages);
-                }
+//                //
+//                for (selex_it = info.selectivity_models.begin(); selex_it != info.selectivity_models.end(); selex_it++) {
+//                    (*selex_it).second->Update(this->info.ages);
+//                }
 
 
 #warning not needed until report time
@@ -253,9 +253,9 @@ namespace mas {
                 f = this->nll_fleets + this->nll_surveys + this->recruitment_likelihood + this->selectivity_likelihood;
 
                 this->first_evaluation = false;
-                std::cout<<"DEvaluate ";
+      
             } else {
-                std::cout<<"Evaluate ";
+              
                 for (int i = 0; i <  variable::tape.stack_current; i++) {
                     variable::tape.stack[i].w->value = 0.0;
                 }
@@ -274,7 +274,7 @@ namespace mas {
                 for (int i = 0; i < variable::tape.stack_current; i++) {
                     variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
                 }
-                f.info = variable::tape.stack[variable::tape.stack_current - 1].w;
+//                f.info = variable::tape.stack[variable::tape.stack_current - 1].w;
             }
         }
 
