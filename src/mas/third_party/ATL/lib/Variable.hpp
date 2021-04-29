@@ -1022,7 +1022,7 @@ namespace atl {
 #else
             std::shared_ptr<DynamicExpressionBase<REAL_T> > var =
                     std::make_shared<atl::VariableDynamic<REAL_T> >(this->info);
-            return std::shared_ptr<VariableDynamic<REAL_T> >(new VariableDynamic<REAL_T>(this->info)); //, VariableDynamic<REAL_T>::free);
+            return std::shared_ptr<VariableDynamic<REAL_T> >(new VariableDynamic<REAL_T>(this->info, this->name)); //, VariableDynamic<REAL_T>::free);
 #endif
         }
 
