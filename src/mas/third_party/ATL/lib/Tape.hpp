@@ -654,20 +654,21 @@ namespace atl {
             for (int i = 0; i < stack_current; i++) {
 
                 atl::StackEntry<REAL_T>& entry = this->stack[i];
-                entry.first.resize(entry.ids.size());
-                int index = 0;
-                typename atl::StackEntry<REAL_T>::vi_storage::const_iterator it;
-                for (it = entry.ids.begin(); it != entry.ids.end(); ++it) {
-                    entry.min_id = std::min((*it)->id, entry.min_id);
-                    entry.max_id = std::max((*it)->id, entry.max_id);
-                }
+//                entry.first.resize(entry.ids.size());
+//                int index = 0;
+//                typename atl::StackEntry<REAL_T>::vi_storage::const_iterator it;
+//                for (it = entry.ids.begin(); it != entry.ids.end(); ++it) {
+//                    entry.min_id = std::min((*it)->id, entry.min_id);
+//                    entry.max_id = std::max((*it)->id, entry.max_id);
+//                    
+//                }
 
                 REAL_T v = entry.exp->GetValue();
                 entry.w->value = v;
             }
         }
 
-        void DynamicReverse(first_order_container& derivatives) {
+        void DynamicReverse() {
             derivatives[this->stack[(stack_current - 1)].w->id] = static_cast<REAL_T> (1.0);
             REAL_T w = static_cast<REAL_T> (0.0);
             typename atl::StackEntry< REAL_T>::vi_iterator vit;
@@ -681,7 +682,7 @@ namespace atl {
                     W = static_cast<REAL_T> (0.0);
                     index = 0;
                     for (vit = this->stack[i].ids.begin(); vit != this->stack[i].ids.end(); ++vit) {
-                        derivatives[(*vit)->id] += w * this->stack[i].first[index];
+                        this->first_order_derivatives[(*vit)->id] += w * this->stack[i].exp->EvaluateDerivative((*vit)->id);
                         index++;
                     }
 
@@ -1217,7 +1218,7 @@ namespace atl {
 
         }
 
-        void Reset(bool reset_tape = true) {
+        void Reset(bool reset_tape = false) {
             this->first_order_derivatives.clear();
             this->range_weights.clear();
             this->second_order_derivatives.clear();

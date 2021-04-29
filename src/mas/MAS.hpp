@@ -71,6 +71,11 @@ namespace mas {
         variable recruitment_deviations_component;
         variable nll_fleets;
         variable nll_surveys;
+
+        //
+        bool first_evaluation = true;
+        int f_calculation_tape_break;
+
     public:
         int phase;
         mas::Information< REAL_T> info;
@@ -104,6 +109,8 @@ namespace mas {
 
         inline void Run(variable& f) {
 
+            variable::tape.derivative_trace_level = atl::DYNAMIC_RECORD;
+
             f = static_cast<REAL_T> (0.0);
             this->nll_fleets = 0.0;
             this->nll_surveys = 0.0;
@@ -128,433 +135,494 @@ namespace mas {
             //                (*ait).second->Prepare();
             //            }
 
-            for (mit = info.movement_models.begin(); mit != info.movement_models.end(); ++mit) {
-                (*mit).second->Prepare();
-            }
 
-            for (rit = info.recruitment_models.begin(); rit != info.recruitment_models.end(); rit++) {
-                (*rit).second->Prepare();
-            }
-            //
-            for (selex_it = info.selectivity_models.begin(); selex_it != info.selectivity_models.end(); selex_it++) {
-                (*selex_it).second->Update(this->info.ages);
-            }
+            if (this->first_evaluation) {
+
+                for (mit = info.movement_models.begin(); mit != info.movement_models.end(); ++mit) {
+                    (*mit).second->Prepare();
+                }
+
+                for (rit = info.recruitment_models.begin(); rit != info.recruitment_models.end(); rit++) {
+                    (*rit).second->Prepare();
+                }
+                //
+                for (selex_it = info.selectivity_models.begin(); selex_it != info.selectivity_models.end(); selex_it++) {
+                    (*selex_it).second->Update(this->info.ages);
+                }
 
 
 #warning not needed until report time
-            //            /**
-            //             * Prepare areas for evaluation. Resets runtime information.
-            //             */
-            //            for (ait = info.areas.begin(); ait != info.areas.end(); ait++) {
-            //                (*ait).second->Prepare();
-            //            }
+                //            /**
+                //             * Prepare areas for evaluation. Resets runtime information.
+                //             */
+                //            for (ait = info.areas.begin(); ait != info.areas.end(); ait++) {
+                //                (*ait).second->Prepare();
+                //            }
 
-            /**
-             * Prepare Populations for evaluation. Resets runtime
-             * information.
-             */
-            for (it = pops.begin(); it != pops.end(); ++it) {
-                //                (*it).second->phase = *phase;
-                (*it).second->Prepare();
-            }
-
-            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-                (*sit).second->Prepare();
-            }
-
-            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-                (*fit).second->Prepare();
-            }
-
-            /**
-             * Evaluate each population and push final numbers to
-             * Area, fleet, and survey objects.
-             */
-            for (it = pops.begin(); it != pops.end(); ++it) {
-                (*it).second->Evaluate();
-            }
-
-
-
-            //          
-            /**
-             * Loop through each area and compute proportions for catch, surveys,
-             * and numbers.
-             */
-
-            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-                (*fit).second->ComputeProportions();
-            }
-
-
-
-            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-                (*sit).second->ComputeProportions();
-            }
-
-
-            // NOTE:  all of the NLL components have the correct sign in ComputeNLLComponents() already; do not adjust them here
-
-            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-                (*fit).second->ComputeNLLComponents();
-                this->nll_fleets += (*fit).second->nll;
-            }
-
-            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-                (*sit).second->ComputeNLLComponents();
-                this->nll_surveys += (*sit).second->nll; //+= (*sit).second->survey_biomass_component;
-                //                this->nll_surveys += (*sit).second->survey_age_comp_component;
-            }
-
-            for (rit = info.recruitment_models.begin(); rit != info.recruitment_models.end(); rit++) {
-                this->recruitment_likelihood += (*rit).second->LikelihoodComponent();
-            }
-
-            for (selex_it = info.selectivity_models.begin(); selex_it != info.selectivity_models.end(); selex_it++) {
-                if ((*selex_it).second->used) {
-                    this->selectivity_likelihood += (*selex_it).second->LikelihoodComponent(phase);
+                /**
+                 * Prepare Populations for evaluation. Resets runtime
+                 * information.
+                 */
+                for (it = pops.begin(); it != pops.end(); ++it) {
+                    //                (*it).second->phase = *phase;
+                    (*it).second->Prepare();
                 }
-            }
 
-            //            std::cout<<"recruitment_likelihood = "<<this->recruitment_likelihood<<"\n";
-            f = this->nll_fleets + this->nll_surveys + this->recruitment_likelihood + this->selectivity_likelihood;
+                for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+                    (*sit).second->Prepare();
+                }
+
+                for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+                    (*fit).second->Prepare();
+                }
+
+
+                for (it = pops.begin(); it != pops.end(); ++it) {
+                    (*it).second->InitializePopulationinAreasPreFCalc();
+                }
+
+                this->f_calculation_tape_break = variable::tape.stack_current;
+                variable::tape.recording = false;
+
+                for (it = pops.begin(); it != pops.end(); ++it) {
+                    (*it).second->FCalc();
+                }
+
+                variable::tape.recording = true;
+
+                for (it = pops.begin(); it != pops.end(); ++it) {
+                    (*it).second->InitializePopulationinAreasPostFCalc();
+                }
+
+
+                /**
+                 * Evaluate each population and push final numbers to
+                 * Area, fleet, and survey objects.
+                 */
+                for (it = pops.begin(); it != pops.end(); ++it) {
+                    (*it).second->Evaluate();
+                }
+
+
+
+                //          
+                /**
+                 * Loop through each area and compute proportions for catch, surveys,
+                 * and numbers.
+                 */
+
+                for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+                    (*fit).second->ComputeProportions();
+                }
+
+
+
+                for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+                    (*sit).second->ComputeProportions();
+                }
+
+
+                // NOTE:  all of the NLL components have the correct sign in ComputeNLLComponents() already; do not adjust them here
+
+                for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+                    (*fit).second->ComputeNLLComponents();
+                    this->nll_fleets += (*fit).second->nll;
+                }
+
+                for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+                    (*sit).second->ComputeNLLComponents();
+                    this->nll_surveys += (*sit).second->nll; //+= (*sit).second->survey_biomass_component;
+                    //                this->nll_surveys += (*sit).second->survey_age_comp_component;
+                }
+
+                for (rit = info.recruitment_models.begin(); rit != info.recruitment_models.end(); rit++) {
+                    this->recruitment_likelihood += (*rit).second->LikelihoodComponent();
+                }
+
+                for (selex_it = info.selectivity_models.begin(); selex_it != info.selectivity_models.end(); selex_it++) {
+                    if ((*selex_it).second->used) {
+                        this->selectivity_likelihood += (*selex_it).second->LikelihoodComponent(phase);
+                    }
+                }
+
+                //            std::cout<<"recruitment_likelihood = "<<this->recruitment_likelihood<<"\n";
+                f = this->nll_fleets + this->nll_surveys + this->recruitment_likelihood + this->selectivity_likelihood;
+            } else {
+
+                for (int i = 0; i < this->f_calculation_tape_break; i++) {
+                    variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
+                }
+
+                /**
+                 * Evaluate each population and push final numbers to
+                 * Area, fleet, and survey objects.
+                 */
+                for (it = pops.begin(); it != pops.end(); ++it) {
+                    (*it).second->Evaluate();
+                }
+
+                for (int i = this->f_calculation_tape_break; i < variable::tape.stack_current; i++) {
+                    variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
+                }
+
+                //                f.SetValue()
+            }
         }
 
-        void RunOperationalModel() {
-            this->catch_biomass_component = 0.0;
-            this->survey_biomass_component = 0.0;
-            this->fishery_age_comp_component = 0.0;
-            this->survey_age_comp_component = 0.0;
-            this->recruitment_likelihood = 0.0;
-            this->selectivity_likelihood = 0.0;
+        void virtual ComputeGradient(std::vector<atl::Variable<T>* >&p,
+                std::valarray<T>&g, T & maxgc) {
+            g.resize(p.size());
+            atl::Variable<T>::tape.DynamicReverse();
 
-            typename mas::Information<REAL_T>::fleet_iterator fit;
-            typename mas::Information<REAL_T>::survey_model_iterator sit;
-            typename std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >::iterator it;
-            std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >& pops =
-                    info.GetPopulations();
-            typename mas::Information<REAL_T>::area_iterator ait;
-            typename mas::Information<REAL_T>::recruitment_model_iterator rit;
-            typename mas::Information<REAL_T>::selectivity_model_iterator selex_it;
-            typename mas::Information<REAL_T>::movement_model_iterator mit;
+            for (int i = 0; i < g.size(); i++) {
+                g[i] = atl::Variable<T>::tape.Value(p[i]->info->id);
+                if (i == 0) {
+                    maxgc = std::fabs(g[i]);
+                } else {
+                    if (std::fabs(g[i]) > maxgc) {
 
-            //            for (ait = info.areas.begin(); ait != info.areas.end(); ait++) {
-            //                (*ait).second->Prepare();
-            //            }
-
-            for (mit = info.movement_models.begin(); mit != info.movement_models.end(); ++mit) {
-                (*mit).second->Prepare();
+                        maxgc = std::fabs(g[i]);
+                    }
+                }
             }
+        }
+    }
 
-            for (rit = info.recruitment_models.begin(); rit != info.recruitment_models.end(); rit++) {
-                (*rit).second->Prepare();
-            }
-            //
-            for (selex_it = info.selectivity_models.begin(); selex_it != info.selectivity_models.end(); selex_it++) {
-                (*selex_it).second->Update(this->info.ages);
-            }
+    void RunOperationalModel() {
+        this->catch_biomass_component = 0.0;
+        this->survey_biomass_component = 0.0;
+        this->fishery_age_comp_component = 0.0;
+        this->survey_age_comp_component = 0.0;
+        this->recruitment_likelihood = 0.0;
+        this->selectivity_likelihood = 0.0;
+
+        typename mas::Information<REAL_T>::fleet_iterator fit;
+        typename mas::Information<REAL_T>::survey_model_iterator sit;
+        typename std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >::iterator it;
+        std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >& pops =
+                info.GetPopulations();
+        typename mas::Information<REAL_T>::area_iterator ait;
+        typename mas::Information<REAL_T>::recruitment_model_iterator rit;
+        typename mas::Information<REAL_T>::selectivity_model_iterator selex_it;
+        typename mas::Information<REAL_T>::movement_model_iterator mit;
+
+        //            for (ait = info.areas.begin(); ait != info.areas.end(); ait++) {
+        //                (*ait).second->Prepare();
+        //            }
+
+        for (mit = info.movement_models.begin(); mit != info.movement_models.end(); ++mit) {
+            (*mit).second->Prepare();
+        }
+
+        for (rit = info.recruitment_models.begin(); rit != info.recruitment_models.end(); rit++) {
+            (*rit).second->Prepare();
+        }
+        //
+        for (selex_it = info.selectivity_models.begin(); selex_it != info.selectivity_models.end(); selex_it++) {
+            (*selex_it).second->Update(this->info.ages);
+        }
 
 
 #warning not needed until report time
-            //            /**
-            //             * Prepare areas for evaluation. Resets runtime information.
-            //             */
-            //            for (ait = info.areas.begin(); ait != info.areas.end(); ait++) {
-            //                (*ait).second->Prepare();
-            //            }
+        //            /**
+        //             * Prepare areas for evaluation. Resets runtime information.
+        //             */
+        //            for (ait = info.areas.begin(); ait != info.areas.end(); ait++) {
+        //                (*ait).second->Prepare();
+        //            }
 
-            /**
-             * Prepare Populations for evaluation. Resets runtime
-             * information.
-             */
-            for (it = pops.begin(); it != pops.end(); ++it) {
-                //                (*it).second->phase = *phase;
-                (*it).second->Prepare();
-            }
+        /**
+         * Prepare Populations for evaluation. Resets runtime
+         * information.
+         */
+        for (it = pops.begin(); it != pops.end(); ++it) {
+            //                (*it).second->phase = *phase;
+            (*it).second->Prepare();
+        }
 
-            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-                (*sit).second->Prepare();
-            }
+        for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+            (*sit).second->Prepare();
+        }
 
-            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-                (*fit).second->Prepare();
-            }
-
-            /**
-             * Evaluate each population and push final numbers to
-             * Area, fleet, and survey objects.
-             */
-            for (it = pops.begin(); it != pops.end(); ++it) {
-                (*it).second->Evaluate();
-            }
-
-
-            
-            
-
-            //          
-            /**
-             * Loop through each area and compute proportions for catch, surveys,
-             * and numbers.
-             */
-
-            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-                (*fit).second->ComputeProportions();
-                (*fit).second->ApplyOperatingModelError();
-                
-                info.data.push_back((*fit).second->catch_biomass_data);
-                info.data.push_back((*fit).second->catch_proportion_at_age_data);
-                info.data_dictionary[(*fit).second->id].push_back((*fit).second->catch_biomass_data);
-                info.data_dictionary[(*fit).second->id].push_back((*fit).second->catch_proportion_at_age_data);
-            }
-
-
-
-            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-                (*sit).second->ComputeProportions();
-                (*sit).second->ApplyOperatingModelError();
-                info.data.push_back((*sit).second->survey_biomass_data);
-                info.data.push_back((*sit).second->survey_proportion_at_age_data);
-                info.data_dictionary[(*sit).second->id].push_back((*sit).second->survey_biomass_data);
-                info.data_dictionary[(*sit).second->id].push_back((*sit).second->survey_proportion_at_age_data);
-
-            }
-
+        for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+            (*fit).second->Prepare();
         }
 
         /**
-         * Pearson's chi-squared test on biomass and age comp.
+         * Evaluate each population and push final numbers to
+         * Area, fleet, and survey objects.
          */
-        void ComputeGoodnessOfFit() {
-
-            variable f;
-            atl::Variable<REAL_T>::tape.Reset();
-            atl::Variable<REAL_T>::tape.recording = true;
-            atl::Variable<REAL_T>::tape.derivative_trace_level = atl::SECOND_ORDER_REVERSE;
-            this->Run(f);
-            atl::Variable<REAL_T>::tape.AccumulateSecondOrder();
-            typename mas::Information<REAL_T>::fleet_iterator fit;
-            typename mas::Information<REAL_T>::survey_model_iterator sit;
+        for (it = pops.begin(); it != pops.end(); ++it) {
+            (*it).second->Evaluate();
+        }
 
 
-            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-                (*sit).second->ComputeGoodnessOfFit();
-                this->chi_squared += (*sit).second->chi_squared;
-                this->g_test += (*sit).second->g_test;
-                this->rmse += (*sit).second->rmse;
-                this->rmsle += (*sit).second->rmsle;
-            }
 
-            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-                (*fit).second->ComputeGoodnessOfFit();
-                this->chi_squared += (*fit).second->chi_squared;
-                this->g_test += (*fit).second->g_test;
-                this->rmse += (*fit).second->rmse;
-                this->rmsle += (*fit).second->rmsle;
-                this->AIC += (*fit).second->AIC;
-                this->BIC += (*fit).second->BIC;
-            }
+
+
+        //          
+        /**
+         * Loop through each area and compute proportions for catch, surveys,
+         * and numbers.
+         */
+
+        for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+            (*fit).second->ComputeProportions();
+            (*fit).second->ApplyOperatingModelError();
+
+            info.data.push_back((*fit).second->catch_biomass_data);
+            info.data.push_back((*fit).second->catch_proportion_at_age_data);
+            info.data_dictionary[(*fit).second->id].push_back((*fit).second->catch_biomass_data);
+            info.data_dictionary[(*fit).second->id].push_back((*fit).second->catch_proportion_at_age_data);
+        }
+
+
+
+        for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+            (*sit).second->ComputeProportions();
+            (*sit).second->ApplyOperatingModelError();
+            info.data.push_back((*sit).second->survey_biomass_data);
+            info.data.push_back((*sit).second->survey_proportion_at_age_data);
+            info.data_dictionary[(*sit).second->id].push_back((*sit).second->survey_biomass_data);
+            info.data_dictionary[(*sit).second->id].push_back((*sit).second->survey_proportion_at_age_data);
 
         }
 
-        void Forecast() {
+    }
+
+    /**
+     * Pearson's chi-squared test on biomass and age comp.
+     */
+    void ComputeGoodnessOfFit() {
+
+        variable f;
+        atl::Variable<REAL_T>::tape.Reset();
+        atl::Variable<REAL_T>::tape.recording = true;
+        atl::Variable<REAL_T>::tape.derivative_trace_level = atl::SECOND_ORDER_REVERSE;
+        this->Run(f);
+        atl::Variable<REAL_T>::tape.AccumulateSecondOrder();
+        typename mas::Information<REAL_T>::fleet_iterator fit;
+        typename mas::Information<REAL_T>::survey_model_iterator sit;
+
+
+        for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+            (*sit).second->ComputeGoodnessOfFit();
+            this->chi_squared += (*sit).second->chi_squared;
+            this->g_test += (*sit).second->g_test;
+            this->rmse += (*sit).second->rmse;
+            this->rmsle += (*sit).second->rmsle;
+        }
+
+        for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+            (*fit).second->ComputeGoodnessOfFit();
+            this->chi_squared += (*fit).second->chi_squared;
+            this->g_test += (*fit).second->g_test;
+            this->rmse += (*fit).second->rmse;
+            this->rmsle += (*fit).second->rmsle;
+            this->AIC += (*fit).second->AIC;
+            this->BIC += (*fit).second->BIC;
+        }
+
+    }
+
+    void Forecast() {
+
+    }
+
+    void Finalize() {
+
+        std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >& pops =
+                info.GetPopulations();
+        typename std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >::iterator it;
+        for (it = pops.begin(); it != pops.end(); ++it) {
+            (*it).second->PushToAreasAndFleets();
+            (*it).second->Finalize();
+
+            //                (*it).second->ComputeBiologicalReferencePoints();
+        }
+    }
+
+    void Report() {
+
+        //            std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >& pops =
+        //                    info.GetPopulations();
+        //            typename std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >::iterator it;
+        //            this->info.DumpSelectivity("selectivity.txt");
+        //            this->info.DumpFishingMortality("fishing_mortality.txt");
+        //            atl::Variable<REAL_T>::tape.Reset();
+        //            atl::Variable<REAL_T>::tape.recording = true;
+        //            atl::Variable<REAL_T> f;
+        //            this->Run(f);
+        //
+        //            /**
+        //             * Push final numbers to
+        //             * Area, fleet, and survey objects.
+        //             */
+        //
+        //
+        //            atl::Variable<REAL_T>::tape.AccumulateFirstOrder();
+        //
+        //            atl::Variable<REAL_T>::tape.recording = false;
+        //
+        //            //            for (it = pops.begin(); it != pops.end(); ++it) {
+        //            //                (*it).second->PushToAreasAndFleets();
+        //            //                (*it).second->ComputeBiologicalReferencePoints();
+        //            //            }
+        //
+        //
+        //
+        //            std::ofstream latex("populations.tex");
+        //            latex << "\\documentclass{article}\n";
+        //            latex << "\\usepackage{tikz}\n";
+        //            latex << "\\usetikzlibrary{positioning,fit,shapes.geometric,backgrounds}\n";
+        //            latex << "\\usepackage{pgfplots}\n";
+        //            latex << "\\begin{document}\n\n\n";
+        //            std::ofstream out2("populations.txt");
+        //
+        //
+        //
+        //            out2 << std::fixed;
+        //            for (it = pops.begin(); it != pops.end(); ++it) {
+        //                out2 << *(*it).second << std::endl;
+        //                latex << mas::ToLatexCharts<REAL_T>(*(*it).second) << "\n";
+        //            }
+        //            latex << "\\end{document}\n";
+        //
+        //
+        //            latex.close();
+        //            out2.close();
+        //            /**
+        //             * Loop through each area and compute proportions for catch, surveys,
+        //             * and numbers.
+        //             */
+        //
+        //            std::ofstream out("mas_report.txt");
+        //            std::ofstream nll_out("likelihood.txt");
+        //            out << std::fixed;
+        //            REAL_T chi_age_comp_fleet = 0.0;
+        //            REAL_T chi_biomass_fleet = 0.0;
+        //            REAL_T chi_age_comp_survey = 0.0;
+        //            REAL_T chi_biomass_survey = 0.0;
+        //
+        //            out << "Objective Function Value: " << f << "\n\n";
+        //
+        //            out << std::setw(55) << std::left << "Fleet Likelihood Components " << std::setw(15) << "value" << "RMSE" << std::endl;
+        //            typename mas::Information<REAL_T>::fleet_iterator fit;
+        //            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+        //
+        //                out << "Fleet_" << (*fit).second->id << "\n";
+        //                for (int i = 0; i < (*fit).second->nll_components.size(); i++) {
+        //                    (*fit).second->nll_components[i].Finalize();
+        //                    out << std::setw(55) << std::left <<
+        //                            (*fit).second->nll_component_values[i].GetName() << std::setw(15)
+        //                            << (*fit).second->nll_component_values[i].GetValue() << " "
+        //                            << (*fit).second->nll_components[i].chi_square << "\n";
+        //                }
+        //            }
+        //
+        //            out << std::endl;
+        //            out << std::setw(55) << std::left << "Survey Likelihood Components " << std::setw(15) << "value" << "RMSE" << std::endl;
+        //            typename mas::Information<REAL_T>::survey_model_iterator sit;
+        //            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+        //
+        //                out << "Survey_" << (*sit).second->id << "\n";
+        //                for (int i = 0; i < (*sit).second->nll_components.size(); i++) {
+        //                    (*sit).second->nll_components[i].Finalize();
+        //                    out << std::setw(55) << std::left <<
+        //                            (*sit).second->nll_component_values[i].GetName() <<
+        //                            std::setw(15) << (*sit).second->nll_component_values[i].GetValue() <<
+        //                            " " << (*sit).second->nll_components[i].chi_square << "\n";
+        //                }
+        //            }
+        //            out << std::endl;
+        //            out << "Estimated Parameters:\n";
+        //            out << std::setw(45) << std::left << "Name" << std::setw(25) << "Value" << " " << std::setw(25) << "Gradient" << "\n";
+        //
+        //            for (int i = 0; i < this->info.estimated_parameters.size(); i++) {
+        //                out << std::setw(30) << std::left << this->info.estimated_parameters[i]->GetName() << std::setw(25) << std::fixed << this->info.estimated_parameters[i]->info->value << " " << std::setw(25) << std::scientific << atl::Variable<double>::tape.Value(this->info.estimated_parameters[i]->info->id) << "\n";
+        //            }
+        //            out << "\n\n";
+        //            out << std::fixed;
+        //
+        //            typename mas::Information<REAL_T>::recruitment_model_iterator rit;
+        //
+        //            mas::Information<double>::area_iterator ait;
+        //
+        //
+        //            //            for (ait = info.areas.begin(); ait != info.areas.end(); ait++) {
+        //            //                (*ait).second->ComputeProportions();
+        //            //                out << *(*ait).second;
+        //            //            }
+        //
+        //            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+        //                out << *(*fit).second;
+        //            }
+        //
+        //
+        //            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+        //                out << *(*sit).second;
+        //            }
+        //
+        //            REAL_T GOF = this->ComputeGoodnessOfFit();
+        //            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+        //                nll_out << (*fit).second->NLLComponentsToString() << std::endl;
+        //            }
+        //            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+        //                nll_out << (*sit).second->NLLComponentsToString() << std::endl;
+        //            }
+        //            std::cout << "ComputeGoodnessOfFit = " << GOF << "\n\n";
+    }
+
+    void HTMLReport() {
+
+
+        std::unordered_map<int, std::shared_ptr<mas::Population<double> > >& pops =
+                info.GetPopulations();
+
+        typename std::unordered_map<int, std::shared_ptr<mas::Population<double> > >::iterator it;
+        std::ofstream out("mas_report.html");
+
+
+        out << "<html>\n";
+        out << "<head><b><p style=\"font-size:xx-large;\">Meta-population Assessment System Report</b></p>";
+        out << "</head>\n";
+        out << "<body>\n";
+        out << std::fixed;
+        out << "<b>Study Name:</b> " << this->info.study_name << "\n";
+        out << "<br><b>Analyst:</b> " << this->info.analyst << "\n";
+        out << "<br><b>Number of Populations:</b> " << this->info.populations.size() << "\n";
+        out << "<br><b>Number of Areas:</b> " << this->info.areas.size() << "\n";
+
+
+
+        for (it = pops.begin(); it != pops.end(); ++it) {
+
+            out << mas::ToHTML(*(*it).second);
 
         }
 
-        void Finalize() {
+        out << "</body>\n";
+        out << "</html>";
 
-            std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >& pops =
-                    info.GetPopulations();
-            typename std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >::iterator it;
-            for (it = pops.begin(); it != pops.end(); ++it) {
-                (*it).second->PushToAreasAndFleets();
-                (*it).second->Finalize();
+        out.close();
 
-                //                (*it).second->ComputeBiologicalReferencePoints();
-            }
-        }
+    }
 
-        void Report() {
+    void show(std::ostream& out) {
+        std::unordered_map<int, std::shared_ptr<mas::Population<double> > >& pops =
+                info.GetPopulations();
+        typename std::unordered_map<int, std::shared_ptr<mas::Population<double> > >::iterator it;
 
-            //            std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >& pops =
-            //                    info.GetPopulations();
-            //            typename std::unordered_map<int, std::shared_ptr<mas::Population<REAL_T> > >::iterator it;
-            //            this->info.DumpSelectivity("selectivity.txt");
-            //            this->info.DumpFishingMortality("fishing_mortality.txt");
-            //            atl::Variable<REAL_T>::tape.Reset();
-            //            atl::Variable<REAL_T>::tape.recording = true;
-            //            atl::Variable<REAL_T> f;
-            //            this->Run(f);
-            //
-            //            /**
-            //             * Push final numbers to
-            //             * Area, fleet, and survey objects.
-            //             */
-            //
-            //
-            //            atl::Variable<REAL_T>::tape.AccumulateFirstOrder();
-            //
-            //            atl::Variable<REAL_T>::tape.recording = false;
-            //
-            //            //            for (it = pops.begin(); it != pops.end(); ++it) {
-            //            //                (*it).second->PushToAreasAndFleets();
-            //            //                (*it).second->ComputeBiologicalReferencePoints();
-            //            //            }
-            //
-            //
-            //
-            //            std::ofstream latex("populations.tex");
-            //            latex << "\\documentclass{article}\n";
-            //            latex << "\\usepackage{tikz}\n";
-            //            latex << "\\usetikzlibrary{positioning,fit,shapes.geometric,backgrounds}\n";
-            //            latex << "\\usepackage{pgfplots}\n";
-            //            latex << "\\begin{document}\n\n\n";
-            //            std::ofstream out2("populations.txt");
-            //
-            //
-            //
-            //            out2 << std::fixed;
-            //            for (it = pops.begin(); it != pops.end(); ++it) {
-            //                out2 << *(*it).second << std::endl;
-            //                latex << mas::ToLatexCharts<REAL_T>(*(*it).second) << "\n";
-            //            }
-            //            latex << "\\end{document}\n";
-            //
-            //
-            //            latex.close();
-            //            out2.close();
-            //            /**
-            //             * Loop through each area and compute proportions for catch, surveys,
-            //             * and numbers.
-            //             */
-            //
-            //            std::ofstream out("mas_report.txt");
-            //            std::ofstream nll_out("likelihood.txt");
-            //            out << std::fixed;
-            //            REAL_T chi_age_comp_fleet = 0.0;
-            //            REAL_T chi_biomass_fleet = 0.0;
-            //            REAL_T chi_age_comp_survey = 0.0;
-            //            REAL_T chi_biomass_survey = 0.0;
-            //
-            //            out << "Objective Function Value: " << f << "\n\n";
-            //
-            //            out << std::setw(55) << std::left << "Fleet Likelihood Components " << std::setw(15) << "value" << "RMSE" << std::endl;
-            //            typename mas::Information<REAL_T>::fleet_iterator fit;
-            //            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-            //
-            //                out << "Fleet_" << (*fit).second->id << "\n";
-            //                for (int i = 0; i < (*fit).second->nll_components.size(); i++) {
-            //                    (*fit).second->nll_components[i].Finalize();
-            //                    out << std::setw(55) << std::left <<
-            //                            (*fit).second->nll_component_values[i].GetName() << std::setw(15)
-            //                            << (*fit).second->nll_component_values[i].GetValue() << " "
-            //                            << (*fit).second->nll_components[i].chi_square << "\n";
-            //                }
-            //            }
-            //
-            //            out << std::endl;
-            //            out << std::setw(55) << std::left << "Survey Likelihood Components " << std::setw(15) << "value" << "RMSE" << std::endl;
-            //            typename mas::Information<REAL_T>::survey_model_iterator sit;
-            //            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-            //
-            //                out << "Survey_" << (*sit).second->id << "\n";
-            //                for (int i = 0; i < (*sit).second->nll_components.size(); i++) {
-            //                    (*sit).second->nll_components[i].Finalize();
-            //                    out << std::setw(55) << std::left <<
-            //                            (*sit).second->nll_component_values[i].GetName() <<
-            //                            std::setw(15) << (*sit).second->nll_component_values[i].GetValue() <<
-            //                            " " << (*sit).second->nll_components[i].chi_square << "\n";
-            //                }
-            //            }
-            //            out << std::endl;
-            //            out << "Estimated Parameters:\n";
-            //            out << std::setw(45) << std::left << "Name" << std::setw(25) << "Value" << " " << std::setw(25) << "Gradient" << "\n";
-            //
-            //            for (int i = 0; i < this->info.estimated_parameters.size(); i++) {
-            //                out << std::setw(30) << std::left << this->info.estimated_parameters[i]->GetName() << std::setw(25) << std::fixed << this->info.estimated_parameters[i]->info->value << " " << std::setw(25) << std::scientific << atl::Variable<double>::tape.Value(this->info.estimated_parameters[i]->info->id) << "\n";
-            //            }
-            //            out << "\n\n";
-            //            out << std::fixed;
-            //
-            //            typename mas::Information<REAL_T>::recruitment_model_iterator rit;
-            //
-            //            mas::Information<double>::area_iterator ait;
-            //
-            //
-            //            //            for (ait = info.areas.begin(); ait != info.areas.end(); ait++) {
-            //            //                (*ait).second->ComputeProportions();
-            //            //                out << *(*ait).second;
-            //            //            }
-            //
-            //            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-            //                out << *(*fit).second;
-            //            }
-            //
-            //
-            //            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-            //                out << *(*sit).second;
-            //            }
-            //
-            //            REAL_T GOF = this->ComputeGoodnessOfFit();
-            //            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-            //                nll_out << (*fit).second->NLLComponentsToString() << std::endl;
-            //            }
-            //            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-            //                nll_out << (*sit).second->NLLComponentsToString() << std::endl;
-            //            }
-            //            std::cout << "ComputeGoodnessOfFit = " << GOF << "\n\n";
-        }
+        for (it = pops.begin(); it != pops.end(); ++it) {
 
-        void HTMLReport() {
-
-
-            std::unordered_map<int, std::shared_ptr<mas::Population<double> > >& pops =
-                    info.GetPopulations();
-
-            typename std::unordered_map<int, std::shared_ptr<mas::Population<double> > >::iterator it;
-            std::ofstream out("mas_report.html");
-
-
-            out << "<html>\n";
-            out << "<head><b><p style=\"font-size:xx-large;\">Meta-population Assessment System Report</b></p>";
-            out << "</head>\n";
-            out << "<body>\n";
-            out << std::fixed;
-            out << "<b>Study Name:</b> " << this->info.study_name << "\n";
-            out << "<br><b>Analyst:</b> " << this->info.analyst << "\n";
-            out << "<br><b>Number of Populations:</b> " << this->info.populations.size() << "\n";
-            out << "<br><b>Number of Areas:</b> " << this->info.areas.size() << "\n";
-
-
-
-            for (it = pops.begin(); it != pops.end(); ++it) {
-
-                out << mas::ToHTML(*(*it).second);
-
-            }
-
-            out << "</body>\n";
-            out << "</html>";
-
-            out.close();
+            out << *(*it).second;
 
         }
-
-        void show(std::ostream& out) {
-            std::unordered_map<int, std::shared_ptr<mas::Population<double> > >& pops =
-                    info.GetPopulations();
-            typename std::unordered_map<int, std::shared_ptr<mas::Population<double> > >::iterator it;
-
-            for (it = pops.begin(); it != pops.end(); ++it) {
-
-                out << *(*it).second;
-
-            }
-        }
+    }
 
     private:
 
-    };
+};
 
 
 

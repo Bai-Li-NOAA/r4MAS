@@ -176,7 +176,7 @@ namespace atl {
 
             //2. do numeric factorization
             if (S != NULL) {
-                    ret.factor = cs_chol<Type>(ret.A, S);
+                ret.factor = cs_chol<Type>(ret.A, S);
                 if (ret.factor == NULL) {
                     std::cout << "Cholesky factorization error. " << std::endl;
                 }
@@ -651,6 +651,24 @@ namespace atl {
             //            ff.Copy(this->Evaluate());
         }
 
+        virtual inline void ComputeGradient(std::vector<atl::Variable<T>* >&p,
+                std::valarray<T>&g, T & maxgc) {
+            g.resize(p.size());
+            atl::Variable<T>::tape.AccumulateFirstOrder();
+
+            for (int i = 0; i < g.size(); i++) {
+                g[i] = atl::Variable<T>::tape.Value(p[i]->info->id);
+                if (i == 0) {
+                    maxgc = std::fabs(g[i]);
+                } else {
+                    if (std::fabs(g[i]) > maxgc) {
+
+                        maxgc = std::fabs(g[i]);
+                    }
+                }
+            }
+        }
+
         const ObjectiveFunctionStatistics<T> GetObjectiveFunctionStatistics() {
 
             ObjectiveFunctionStatistics<T> stats;
@@ -721,64 +739,64 @@ namespace atl {
 
             atl::Variable<T>::tape.AccumulateSecondOrder();
 
-//            for (int i = 0; i < this->parameters_m.size(); i++) {
-//                for (int j = 0; j < this->parameters_m.size(); j++) {
-//                    T dxx = atl::Variable<T>::tape.Value(this->parameters_m[i]->info->id,
-//                            this->parameters_m[j]->info->id);
-//                    if (dxx != dxx) {//this is a big hack
-//                        dxx = std::numeric_limits<T>::min();
-//                    }
-//                    if (dxx != static_cast<T> (0.0)) {
-//                        cs_entry<T>(RHessian, i, j, dxx);
-//                    }
-//                }
-//            }
-//
-//            struct cs_sparse<T> *hessian = cs_compress<T>(RHessian);
-//            SparseCholesky<T> sparse_cholesky;
-//
-//            SCResult<T> ret = sparse_cholesky.Analyze(hessian);
-//
-//            csi p, j, m, n, nzmax, nz, *Ap, *Ai;
-//            T* Ax;
-//            n = ret.A_inv->n;
-//            Ap = ret.A_inv->p;
-//            Ai = ret.A_inv->i;
-//            Ax = ret.A_inv->x;
-//
-//            atl::RealMatrix<T> inverse_hess(this->parameters_m.size(), this->parameters_m.size());
-//
-//            for (int j = 0; j < n; j++) {
-//                for (int k = Ap [j]; k < Ap [j + 1]; k++) {
-//                    inverse_hess(Ai[k], j) = Ax[k];
-//                }
-//            }
-//
-//            cs_spfree(RHessian);
-//            cs_spfree(hessian);
-//
-//            std::vector<T> se(this->parameters_m.size());
-//            for (int i = 0; i < this->parameters_m.size(); i++) {
-//                se[i] = std::sqrt(inverse_hess(i, i));
-//            }
-//
-//
-//
-//            atl::RealMatrix<T> outer_product(this->parameters_m.size(), this->parameters_m.size());
-//            for (size_t i = 0; i < this->parameters_m.size(); i++) {
-//                for (size_t j = 0; j < this->parameters_m.size(); j++) {
-//                    outer_product(i, j) = se[i] * se[j];
-//                }
-//            }
-//
-//
-//
+            //            for (int i = 0; i < this->parameters_m.size(); i++) {
+            //                for (int j = 0; j < this->parameters_m.size(); j++) {
+            //                    T dxx = atl::Variable<T>::tape.Value(this->parameters_m[i]->info->id,
+            //                            this->parameters_m[j]->info->id);
+            //                    if (dxx != dxx) {//this is a big hack
+            //                        dxx = std::numeric_limits<T>::min();
+            //                    }
+            //                    if (dxx != static_cast<T> (0.0)) {
+            //                        cs_entry<T>(RHessian, i, j, dxx);
+            //                    }
+            //                }
+            //            }
+            //
+            //            struct cs_sparse<T> *hessian = cs_compress<T>(RHessian);
+            //            SparseCholesky<T> sparse_cholesky;
+            //
+            //            SCResult<T> ret = sparse_cholesky.Analyze(hessian);
+            //
+            //            csi p, j, m, n, nzmax, nz, *Ap, *Ai;
+            //            T* Ax;
+            //            n = ret.A_inv->n;
+            //            Ap = ret.A_inv->p;
+            //            Ai = ret.A_inv->i;
+            //            Ax = ret.A_inv->x;
+            //
+            //            atl::RealMatrix<T> inverse_hess(this->parameters_m.size(), this->parameters_m.size());
+            //
+            //            for (int j = 0; j < n; j++) {
+            //                for (int k = Ap [j]; k < Ap [j + 1]; k++) {
+            //                    inverse_hess(Ai[k], j) = Ax[k];
+            //                }
+            //            }
+            //
+            //            cs_spfree(RHessian);
+            //            cs_spfree(hessian);
+            //
+            //            std::vector<T> se(this->parameters_m.size());
+            //            for (int i = 0; i < this->parameters_m.size(); i++) {
+            //                se[i] = std::sqrt(inverse_hess(i, i));
+            //            }
+            //
+            //
+            //
+            //            atl::RealMatrix<T> outer_product(this->parameters_m.size(), this->parameters_m.size());
+            //            for (size_t i = 0; i < this->parameters_m.size(); i++) {
+            //                for (size_t j = 0; j < this->parameters_m.size(); j++) {
+            //                    outer_product(i, j) = se[i] * se[j];
+            //                }
+            //            }
+            //
+            //
+            //
             atl::RealMatrix<T> ret_m(this->parameters_m.size(), this->parameters_m.size());
-//            for (size_t i = 0; i < this->parameters_m.size(); i++) {
-//                for (size_t j = 0; j < this->parameters_m.size(); j++) {
-//                    ret_m(i, j) = inverse_hess(i, j) * outer_product(i, j);
-//                }
-//            }
+            //            for (size_t i = 0; i < this->parameters_m.size(); i++) {
+            //                for (size_t j = 0; j < this->parameters_m.size(); j++) {
+            //                    ret_m(i, j) = inverse_hess(i, j) * outer_product(i, j);
+            //                }
+            //            }
             return ret_m;
 
             //            atl::Matrix<T> inverse_hess = atl::Matrix<T>::Identity(hess.Size(0));
@@ -1182,7 +1200,7 @@ namespace atl {
                 T ld = cs_log_det(chol->L);
                 log_det = ld;
 
-//                std::cout << ld << "\n";
+                //                std::cout << ld << "\n";
                 //                exit(0);
 
                 for (int i = 0; i < PARAMETERS_SIZE; i++) {
@@ -1240,10 +1258,10 @@ namespace atl {
                         int error = cs_cholsol_x(0, hessian, re_dx.data(), chol, this->S_outer, this->x_scratch.data(), i);
                         trace += re_dx[i];
                     }
-//                    std::cout << trace << "......\n";
+                    //                    std::cout << trace << "......\n";
                     derivatives_logdet[this->parameters_m[p]->info] = trace;
                 }
-//                exit(0);
+                //                exit(0);
 
 
 
@@ -1570,22 +1588,23 @@ namespace atl {
             }
         }
 
-        void ComputeGradient(std::vector<atl::Variable<T>* >&p,
+        void virtual ComputeGradient(std::vector<atl::Variable<T>* >&p,
                 std::valarray<T>&g, T & maxgc) {
-            g.resize(p.size());
-            atl::Variable<T>::tape.AccumulateFirstOrder();
-
-            for (int i = 0; i < g.size(); i++) {
-                g[i] = atl::Variable<T>::tape.Value(p[i]->info->id);
-                if (i == 0) {
-                    maxgc = std::fabs(g[i]);
-                } else {
-                    if (std::fabs(g[i]) > maxgc) {
-
-                        maxgc = std::fabs(g[i]);
-                    }
-                }
-            }
+            this->objective_function_m->ComputeGradient(p,g,maxgc);
+//            g.resize(p.size());
+//            atl::Variable<T>::tape.AccumulateFirstOrder();
+//
+//            for (int i = 0; i < g.size(); i++) {
+//                g[i] = atl::Variable<T>::tape.Value(p[i]->info->id);
+//                if (i == 0) {
+//                    maxgc = std::fabs(g[i]);
+//                } else {
+//                    if (std::fabs(g[i]) > maxgc) {
+//
+//                        maxgc = std::fabs(g[i]);
+//                    }
+//                }
+//            }
         }
 
         void Print() {
@@ -1638,7 +1657,7 @@ namespace atl {
 
             std::cout << "|\n" << ' ' << std::string((print_width * (name_width + 1 + value_width + 1 + grad_width + 1)), '-') << "\n";
             std::cout << "\n\n";
-//            exit(0);
+            //            exit(0);
         }
 
         virtual bool Evaluate() = 0;
@@ -2093,7 +2112,7 @@ namespace atl {
             //            atl::Variable<T> fx;
 
             for (ls = 0; ls < this->max_line_searches; ++ls) {
-             
+
 
                 if (((this->outer_iteration + ls) % this->print_interval) == 0) {
                     this->Print();
@@ -2283,7 +2302,7 @@ namespace atl {
                             this->parameters_m[j]->GetInternalValue()) * this->gradient[j];
                 }
 
-                if ((i % this->print_interval) == 0 ) {
+                if ((i % this->print_interval) == 0) {
                     std::cout << "Iteration " << i << "\n";
                     std::cout << "Phase = " << this->phase_m << "\n";
 
