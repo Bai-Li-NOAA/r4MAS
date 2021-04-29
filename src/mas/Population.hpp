@@ -698,6 +698,7 @@ namespace mas {
                             mas::exp(-1.0 * this->spawning_season_offset * this->M[a]);
                 }
                 this->recruitment_model->SB0[this->id][this->area->id] = temp;
+                this->SB0.SetName("SB0");
                 this->SB0 = temp;
             }
         }
