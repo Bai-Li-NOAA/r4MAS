@@ -258,20 +258,20 @@ namespace mas {
                 for (int i = 0; i < this->f_calculation_tape_break; i++) {
                     variable::tape.stack[i].w->value = 0.0;
                 }
-                for (int i = 0; i < this->f_calculation_tape_break; i++) {
-                    variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
-                    std::cout << i << " = " << variable::tape.stack[i].w->value << std::endl;
-                }
+//                for (int i = 0; i < this->f_calculation_tape_break; i++) {
+//                    variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
+//                    std::cout << i << " = " << variable::tape.stack[i].w->value << std::endl;
+//                }
+//
+//                /**
+//                 * Evaluate each population and push final numbers to
+//                 * Area, fleet, and survey objects.
+//                 */
+//                for (it = pops.begin(); it != pops.end(); ++it) {
+//                    (*it).second->FCalc();
+//                }
 
-                /**
-                 * Evaluate each population and push final numbers to
-                 * Area, fleet, and survey objects.
-                 */
-                for (it = pops.begin(); it != pops.end(); ++it) {
-                    (*it).second->FCalc();
-                }
-
-                for (int i = this->f_calculation_tape_break; i < variable::tape.stack_current; i++) {
+                for (int i = 0; i < variable::tape.stack_current; i++) {
                     variable::tape.stack[i].w->value = variable::tape.stack[i].exp->GetValue();
                     std::cout << i << " = " << variable::tape.stack[i].w->value << std::endl;
                 }
