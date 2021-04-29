@@ -669,13 +669,13 @@ namespace atl {
         }
 
         void DynamicReverse() {
-            derivatives[this->stack[(stack_current - 1)].w->id] = static_cast<REAL_T> (1.0);
+            this->first_order_derivatives[this->stack[(stack_current - 1)].w->id] = static_cast<REAL_T> (1.0);
             REAL_T w = static_cast<REAL_T> (0.0);
             typename atl::StackEntry< REAL_T>::vi_iterator vit;
             size_t index;
             for (int i = (stack_current - 1); i >= 0; i--) {
 
-                REAL_T& W = derivatives[this->stack[i].w->id];
+                REAL_T& W = this->first_order_derivatives[this->stack[i].w->id];
                 if (W != static_cast<REAL_T> (0.0)) {
                     w = W;
 
