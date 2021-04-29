@@ -135,29 +135,31 @@ namespace mas {
             //                (*ait).second->Prepare();
             //            }
 
-            /**
-             * Prepare Populations for evaluation. Resets runtime
-             * information.
-             */
-            for (it = pops.begin(); it != pops.end(); ++it) {
-                //                (*it).second->phase = *phase;
-                (*it).second->Prepare();
-            }
 
-            for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
-                (*sit).second->Prepare();
-            }
-
-            for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
-                (*fit).second->Prepare();
-            }
 
 
             if (this->first_evaluation) {
+                variable::tape.recording = false;
+                /**
+                 * Prepare Populations for evaluation. Resets runtime
+                 * information.
+                 */
+                for (it = pops.begin(); it != pops.end(); ++it) {
+                    //                (*it).second->phase = *phase;
+                    (*it).second->Prepare();
+                }
+
+                for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+                    (*sit).second->Prepare();
+                }
+
+                for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+                    (*fit).second->Prepare();
+                }
 
                 variable::tape.recording = true;
                 variable::tape.derivative_trace_level = atl::DYNAMIC_RECORD;
-                variable::tape.stack_current = 0;
+
                 for (mit = info.movement_models.begin(); mit != info.movement_models.end(); ++mit) {
                     (*mit).second->Prepare();
                 }
@@ -252,9 +254,21 @@ namespace mas {
                 //            std::cout<<"recruitment_likelihood = "<<this->recruitment_likelihood<<"\n";
                 f = this->nll_fleets + this->nll_surveys + this->recruitment_likelihood + this->selectivity_likelihood;
 
-                this->first_evaluation = true;
+                this->first_evaluation = false;
             } else {
+              for (it = pops.begin(); it != pops.end(); ++it) {
+                    //                (*it).second->phase = *phase;
+                    (*it).second->Prepare();
+                }
 
+                for (sit = info.survey_models.begin(); sit != info.survey_models.end(); ++sit) {
+                    (*sit).second->Prepare();
+                }
+
+                for (fit = info.fleets.begin(); fit != info.fleets.end(); ++fit) {
+                    (*fit).second->Prepare();
+                }
+              
                 for (int i = 0; i < this->f_calculation_tape_break; i++) {
                     variable::tape.stack[i].w->value = 0.0;
                 }
