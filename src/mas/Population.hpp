@@ -1064,7 +1064,7 @@ namespace mas {
                 if (season == this->spawning_season) {
                     //previous year spawning biomass
                     variable sb = this->spawning_stock_biomass[(year - 1) * seasons + (season - 1)];
-                    sb.SetName("sb");
+
                     this->recruitment[year * seasons + (season - 1)] =
                             static_cast<REAL_T> (this->sex_fraction_value) * this->recruitment_model->Evaluate(this->id, this->area->id, sb) *
                             mas::exp(this->recruitment_model->bias_correction + //either 0.0 or -0.5*sigma_r^2
@@ -1528,9 +1528,19 @@ namespace mas {
                     //dimension folded index
                     size_t index = year * this->seasons * this->ages.size() + (season - 1) * this->ages.size() + a;
 
+                    std::stringstream ss;
+                    ss << "equilibrium_to_survival_at_spawning" << "[" << index << "]";
+                    this->equilibrium_to_survival_at_spawning[index].SetName(ss.str());
+                    ss.str("");
+                    ss << "numbers_at_age" << "[" << index << "]";
+                    this->numbers_at_age[index].SetName(ss.str());
+                    ss.str("");
+                    ss << "spawning_numbers_at_age" << "[" << index << "]";
+                    this->spawning_numbers_at_age[index].SetName(ss.str());
                     //spawning numbers at age
                     this->equilibrium_to_survival_at_spawning[index] =
                             mas::exp(static_cast<REAL_T> (-1.0) * this->spawning_season_offset * Z[index]);
+
 
                     this->spawning_numbers_at_age[index] =
                             this->equilibrium_to_survival_at_spawning[index] *
@@ -2848,7 +2858,7 @@ namespace mas {
         }
 
         void Evaluate() {
-//            InitializePopulationinAreas();
+            //            InitializePopulationinAreas();
             int y;
             for (y = 0; y < this->years; y++) {
                 for (int s = 1; s <= this->seasons; s++) {
