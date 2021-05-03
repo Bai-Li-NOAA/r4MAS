@@ -680,7 +680,7 @@ namespace mas {
                         this->M[a] - this->initialF) * this->initial_equilibrium_numbers[a] *
                         mas::exp(initial_deviations[a] - static_cast<REAL_T> (0.5)
                         /* mas::pow(sigma_r, static_cast<REAL_T> (2.0))*/));
-//                mas_log<<ss.str()<<" = "<<this->initial_numbers[a]<<std::endl;
+                mas_log<<ss.str()<<" = "<<this->initial_numbers[a]<<std::endl;
             }
 
             //            /*
@@ -2472,7 +2472,6 @@ namespace mas {
         inline void MoveFish(int year, int season) {
             int y = year;
             int s = season;
-            mas_log << year << ", " << season << "\n";
             //            IncrementTime(y, s);
             movement_model_iterator it = this->movement_models.find(year + 1);
             if (it != this->movement_models.end()) {
