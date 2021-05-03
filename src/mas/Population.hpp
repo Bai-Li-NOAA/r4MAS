@@ -673,14 +673,14 @@ namespace mas {
             int a;
             for (a = 0; a < this->ages.size(); a++) {
                 std::stringstream ss;
-                ss<<"initial_numbers"<<"["<<a<<"]";
+//                ss<<"initial_numbers"<<"["<<a<<"]";
                 
                       
                 this->initial_numbers[a] = (mas::exp(static_cast<REAL_T> (-1.0) *
                         this->M[a] - this->initialF) * this->initial_equilibrium_numbers[a] *
                         mas::exp(initial_deviations[a] - static_cast<REAL_T> (0.5)
                         /* mas::pow(sigma_r, static_cast<REAL_T> (2.0))*/));
-                mas_log<<ss.str()<<" = "<<this->initial_numbers[a]<<std::endl;
+//                mas_log<<ss.str()<<" = "<<this->initial_numbers[a]<<std::endl;
             }
 
             //            /*
