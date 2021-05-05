@@ -1218,19 +1218,19 @@ namespace atl {
 
         }
 
-        void Reset(bool reset_tape = false) {
+        void Reset(bool reset_tape = true) {
             this->first_order_derivatives.clear();
             this->range_weights.clear();
             this->second_order_derivatives.clear();
             this->third_order_derivatives.clear();
 
 
-//            if (reset_tape) {
-//                for (int i = 0; i < this->stack_current; i++) {
-//                    stack[i].Reset();
-//                }
-//                this->stack_current = 0;
-//            }
+            if (reset_tape) {
+                for (int i = 0; i < this->stack_current; i++) {
+                    stack[i].Reset();
+                }
+                this->stack_current = 0;
+            }
             //           
 
             //            if (empty_trash) {
