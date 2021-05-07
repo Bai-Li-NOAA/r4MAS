@@ -72,7 +72,7 @@ namespace atl {
         uint32_t max_id = std::numeric_limits<uint32_t>::min();
 
         typedef rs::LazyFlatSet<VariableInfoPtr, atl::less_variable_info<REAL_T> > vi_storage;
-        typedef typename vi_storage::iterator vi_iterator;
+        typedef typename vi_storage::const_iterator vi_iterator;
 //        typedef typename vi_storage::reverse_iterator vi_riterator;
         bool is_nl = false;
         vi_storage ids;
