@@ -1114,30 +1114,26 @@ namespace mas {
 
                 }
 
+                if (age == this->ages.size() - 1) {
+                    //current year plus group index
+                    size_t index1 = year * this->seasons * this->ages.size() + (season - 1) * this->ages.size() + this->ages.size() - 1;
+
+                    //previous year plus group index
+                    size_t index2 = y * this->seasons * this->ages.size() + (s - 1) * this->ages.size() + this->ages.size() - 1;
+
+                    //plus group
+                    this->numbers_at_age[index1] +=
+                            this->numbers_at_age[index2] *
+                            mas::exp(static_cast<REAL_T> (-1.0) *
+                            Z[index2]);
+
+                    this->biomass_at_age[index1] += this->numbers_at_age[index1] * this->weight_at_season_start[index1];
+                }
+
 
             }
 
 
-        }
-
-        inline void CalculateNumbersAtAgePlusGroup(const int& year, const int& season) {
-            int y = year;
-            int s = season;
-
-            this->DecrementTime(y, s);
-            //current year plus group index
-            size_t index1 = year * this->seasons * this->ages.size() + (season - 1) * this->ages.size() + this->ages.size() - 1;
-
-            //previous year plus group index
-            size_t index2 = y * this->seasons * this->ages.size() + (s - 1) * this->ages.size() + this->ages.size() - 1;
-
-            //plus group
-            this->numbers_at_age[index1] +=
-                    this->numbers_at_age[index2] *
-                    mas::exp(static_cast<REAL_T> (-1.0) *
-                    Z[index2]);
-
-            this->biomass_at_age[index1] += this->numbers_at_age[index1] * this->weight_at_season_start[index1];
         }
 
         REAL_T sum(const std::valarray<REAL_T>& val) {
@@ -2869,21 +2865,17 @@ namespace mas {
                             females[areas_list[area]->id].CalculateSpawningBiomass(y, s); //not needed until Finalize
 
 
-                            /******************************************
-                             * Recruitment
-                             *****************************************/
-                            males[areas_list[area]->id].CalculateRecruitment(y, s);
-                            females[areas_list[area]->id].CalculateRecruitment(y, s);
+                            if (a == this->ages - 1) {
+                                /******************************************
+                                 * Recruitment
+                                 *****************************************/
+                                males[areas_list[area]->id].CalculateRecruitment(y, s);
+                                females[areas_list[area]->id].CalculateRecruitment(y, s);
+                            }
 
                         }
                     }
-                    for (int area = 0; area < areas_list.size(); area++) {
-                        /******************************************
-                         * Numbers at Age
-                         *****************************************/
-                        males[areas_list[area]->id].CalculateNumbersAtAgePlusGroup(y, s);
-                        females[areas_list[area]->id].CalculateNumbersAtAgePlusGroup(y, s);
-                    }
+
                     /******************************************
                      * Apply Movement
                      *****************************************/
