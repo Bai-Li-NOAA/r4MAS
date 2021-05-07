@@ -74,7 +74,7 @@ namespace atl {
 
         typedef google::dense_hash_set<VariableInfoPtr, atl::less_variable_info<REAL_T> > vi_storage;
         typedef typename vi_storage::iterator vi_iterator;
-        typedef typename vi_storage::reverse_iterator vi_riterator;
+//         typedef typename vi_storage::reverse_iterator vi_riterator;
         bool is_nl = false;
         vi_storage ids;
         vi_storage nl_ids;
