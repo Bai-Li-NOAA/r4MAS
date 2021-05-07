@@ -2858,14 +2858,15 @@ namespace mas {
                              *****************************************/
                             males[areas_list[area]->id].CalculateNumbersAtAge(y, s, a);
                             females[areas_list[area]->id].CalculateNumbersAtAge(y, s, a);
-                            /******************************************
-                             * Spawning Biomass
-                             *****************************************/
-                            males[areas_list[area]->id].CalculateSpawningBiomass(y, s); //not needed until Finalize
-                            females[areas_list[area]->id].CalculateSpawningBiomass(y, s); //not needed until Finalize
+
 
 
                             if (a == this->ages - 1) {
+                                /******************************************
+                                 * Spawning Biomass
+                                 *****************************************/
+                                males[areas_list[area]->id].CalculateSpawningBiomass(y, s); //not needed until Finalize
+                                females[areas_list[area]->id].CalculateSpawningBiomass(y, s); //not needed until Finalize
                                 /******************************************
                                  * Recruitment
                                  *****************************************/
