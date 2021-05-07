@@ -1559,7 +1559,7 @@ namespace mas {
          * @param year
          * @param season
          */
-        inline void CalculateCatchAtAge(int year, int season) {
+        inline void CalculateCatchAtAge(const int& year, const int& season, const int& age) {
 
             //get a vector of fleets operating this area at this season
             std::vector< std::shared_ptr<Fleet<REAL_T> > >& fleets = this->area->seasonal_fleet_operations[season];
@@ -1570,54 +1570,54 @@ namespace mas {
 
 
 
-            for (int a = 0; a < this->ages.size(); a++) {
+            //            for (int a = 0; a < this->ages.size(); a++) {
 
-                //dimension folded index(year,season,age)
-                size_t index = year * this->seasons * this->ages.size() + (season - 1) * this->ages.size() + a;
+            //dimension folded index(year,season,age)
+            size_t index = year * this->seasons * this->ages.size() + (season - 1) * this->ages.size() + age;
 
-                //loop through fleets operating in this area at this season
-                for (int f = 0; f < fleets.size(); f++) {
-                    //fleet f at age for this area,year,season, age
+            //loop through fleets operating in this area at this season
+            for (int f = 0; f < fleets.size(); f++) {
+                //fleet f at age for this area,year,season, age
 
-                    //local fleet f at age 
-                    variable f_a; // =
-                    variable fca;
-                    if (this->sex == FEMALE) {
-                        fca = (numbers_at_age[index] * (fleets[f]->f_at_age_females[this->area->id][this->id][index]
-                                / Z[index]) * (1.0 - mas::exp(static_cast<REAL_T> (-1.0) * Z[index])));
-                    } else {
-                        fca = (numbers_at_age[index] * (fleets[f]->f_at_age_males[this->area->id][this->id][index]
-                                / Z[index]) * (1.0 - mas::exp(static_cast<REAL_T> (-1.0) * Z[index])));
-                    }
-
-
-                    //add  to the fleet[i]'s total catch numbers at age
-                    fleets[f]->catch_at_age[index] += fca;
-                    //contribute to this population segments total catch numbers at age
-                    catch_at_age[index] += fca;
-                    //contribute to this population segments total catch biomass at age
-                    catch_biomass_at_age[index] += fca * this->weight_at_catch_time[index];
-
-                    total_CB += catch_biomass_at_age[index].GetValue();
-
-                    //add  to the fleet[i]'s total catch numbers at age
-                    fleets[f]->catch_biomass_at_age[index] +=
-                            fca * this->weight_at_catch_time[index];
-
-                    if (this->males) {
-                        fleets[f]->catch_at_age_males[index] += fca;
-                        fleets[f]->catch_biomass_at_age_males[index] +=
-                                fca * this->weight_at_catch_time[index];
-                    } else {
-
-                        fleets[f]->catch_at_age_females[index] += fca;
-                        fleets[f]->catch_biomass_at_age_females[index] +=
-                                fca * this->weight_at_catch_time[index];
-                    }
+                //local fleet f at age 
+                variable f_a; // =
+                variable fca;
+                if (this->sex == FEMALE) {
+                    fca = (numbers_at_age[index] * (fleets[f]->f_at_age_females[this->area->id][this->id][index]
+                            / Z[index]) * (1.0 - mas::exp(static_cast<REAL_T> (-1.0) * Z[index])));
+                } else {
+                    fca = (numbers_at_age[index] * (fleets[f]->f_at_age_males[this->area->id][this->id][index]
+                            / Z[index]) * (1.0 - mas::exp(static_cast<REAL_T> (-1.0) * Z[index])));
                 }
 
+
+                //add  to the fleet[i]'s total catch numbers at age
+                fleets[f]->catch_at_age[index] += fca;
+                //contribute to this population segments total catch numbers at age
+                catch_at_age[index] += fca;
+                //contribute to this population segments total catch biomass at age
+                catch_biomass_at_age[index] += fca * this->weight_at_catch_time[index];
+
+                total_CB += catch_biomass_at_age[index].GetValue();
+
+                //add  to the fleet[i]'s total catch numbers at age
+                fleets[f]->catch_biomass_at_age[index] +=
+                        fca * this->weight_at_catch_time[index];
+
+                if (this->males) {
+                    fleets[f]->catch_at_age_males[index] += fca;
+                    fleets[f]->catch_biomass_at_age_males[index] +=
+                            fca * this->weight_at_catch_time[index];
+                } else {
+
+                    fleets[f]->catch_at_age_females[index] += fca;
+                    fleets[f]->catch_biomass_at_age_females[index] +=
+                            fca * this->weight_at_catch_time[index];
+                }
             }
-            this->catch_biomass_total[year * this->seasons + season - 1] = total_CB;
+
+            //            }
+            this->catch_biomass_total[year * this->seasons + season - 1] += total_CB;
 
 
         }
@@ -1627,43 +1627,43 @@ namespace mas {
          * @param year
          * @param season
          */
-        inline void CalculateSurveyNumbersAtAge(int year, int season) {
+        inline void CalculateSurveyNumbersAtAge(const int& year, const int& season, const int& age) {
             std::vector< std::shared_ptr<Survey<REAL_T> > >& surveys = this->area->seasonal_survey_operations[season];
 
 
             REAL_T total_SI = static_cast<REAL_T> (0.0);
             size_t index2 = year * this->seasons + (season - 1);
-            for (int a = 0; a < this->ages.size(); a++) {
-                size_t index = year * this->seasons * this->ages.size() + (season - 1) * this->ages.size() + a;
+            //            for (int a = 0; a < this->ages.size(); a++) {
+            size_t index = year * this->seasons * this->ages.size() + (season - 1) * this->ages.size() + age;
 
-                //                variable weight = this->weight_at_survey_time[index];
-                for (int s = 0; s < surveys.size(); s++) {
+            //                variable weight = this->weight_at_survey_time[index];
+            for (int s = 0; s < surveys.size(); s++) {
 
-                    // NOTE:  the survey has a catchability (q) associated with it
-                    variable saa = (surveys[s]->q) *
-                            this->numbers_at_age[index] * surveys[s]->season_area_selectivity[season][this->area->id]->Evaluate(this->ages, a) *
-                            mas::exp(static_cast<REAL_T> (-1.0) * survey_season_offset * this->Z[index]);
+                // NOTE:  the survey has a catchability (q) associated with it
+                variable saa = (surveys[s]->q) *
+                        this->numbers_at_age[index] * surveys[s]->season_area_selectivity[season][this->area->id]->Evaluate(this->ages, age) *
+                        mas::exp(static_cast<REAL_T> (-1.0) * survey_season_offset * this->Z[index]);
 
-                    this->survey_numbers_at_age[index] += saa;
-                    surveys[s]->survey_numbers_at_age[index] += saa;
+                this->survey_numbers_at_age[index] += saa;
+                surveys[s]->survey_numbers_at_age[index] += saa;
 
-                    this->survey_index_at_age[index] += saa * this->weight_at_survey_time[index];
-                    total_SI += saa.GetValue() * this->weight_at_survey_time[index].GetValue();
-                    surveys[s]->survey_biomass_at_age[index] += saa * this->weight_at_survey_time[index];
+                this->survey_index_at_age[index] += saa * this->weight_at_survey_time[index];
+                total_SI += saa.GetValue() * this->weight_at_survey_time[index].GetValue();
+                surveys[s]->survey_biomass_at_age[index] += saa * this->weight_at_survey_time[index];
 
 
 
-                    if (this->males) {
-                        surveys[s]->survey_numbers_at_age_males[index] += saa;
-                        surveys[s]->survey_biomass_at_age_males[index] += saa * this->weight_at_survey_time[index];
-                    } else {
+                if (this->males) {
+                    surveys[s]->survey_numbers_at_age_males[index] += saa;
+                    surveys[s]->survey_biomass_at_age_males[index] += saa * this->weight_at_survey_time[index];
+                } else {
 
-                        surveys[s]->survey_numbers_at_age_females[index] += saa;
-                        surveys[s]->survey_biomass_at_age_females[index] += saa * this->weight_at_survey_time[index];
-                    }
+                    surveys[s]->survey_numbers_at_age_females[index] += saa;
+                    surveys[s]->survey_biomass_at_age_females[index] += saa * this->weight_at_survey_time[index];
                 }
             }
-            this->survey_biomass_total[index2] = total_SI;
+            //            }
+            this->survey_biomass_total[index2] += total_SI;
         }
 
         inline void PushToArea() {
@@ -2883,20 +2883,20 @@ namespace mas {
                      * Apply Movement
                      *****************************************/
                     this->MoveFish(y, s);
-
-                    for (int area = 0; area < areas_list.size(); area++) {
-                        /******************************************
-                         * Catch Numbers at Age
-                         *****************************************/
-                        males[areas_list[area]->id].CalculateCatchAtAge(y, s);
-                        females[areas_list[area]->id].CalculateCatchAtAge(y, s);
-                        /******************************************
-                         * Survey Numbers at Age
-                         *****************************************/
-                        males[areas_list[area]->id].CalculateSurveyNumbersAtAge(y, s);
-                        females[areas_list[area]->id].CalculateSurveyNumbersAtAge(y, s);
-                    }// end area
-
+                    for (int a = 0; a < this->ages; a++) {
+                        for (int area = 0; area < areas_list.size(); area++) {
+                            /******************************************
+                             * Catch Numbers at Age
+                             *****************************************/
+                            males[areas_list[area]->id].CalculateCatchAtAge(y, s, a);
+                            females[areas_list[area]->id].CalculateCatchAtAge(y, s);
+                            /******************************************
+                             * Survey Numbers at Age
+                             *****************************************/
+                            males[areas_list[area]->id].CalculateSurveyNumbersAtAge(y, s, a);
+                            females[areas_list[area]->id].CalculateSurveyNumbersAtAge(y, s, a);
+                        }// end area
+                    }
 
 
 
