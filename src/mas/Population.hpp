@@ -2889,7 +2889,7 @@ namespace mas {
                              * Catch Numbers at Age
                              *****************************************/
                             males[areas_list[area]->id].CalculateCatchAtAge(y, s, a);
-                            females[areas_list[area]->id].CalculateCatchAtAge(y, s);
+                            females[areas_list[area]->id].CalculateCatchAtAge(y, s, a);
                             /******************************************
                              * Survey Numbers at Age
                              *****************************************/
