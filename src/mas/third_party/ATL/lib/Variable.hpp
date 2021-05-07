@@ -331,9 +331,8 @@ namespace atl {
 
             std::cout << "THIRD_ORDER_REVERSE" << std::endl;
             atl::StackEntry<REAL_T>& entry = tape.stack[index];
-            if (entry.ids.size() == 0) {
-                exp.PushIds(entry.ids);
-            }
+
+            exp.PushIds(entry.ids);
 
             entry.w = var.info;
             entry.w->count++;
@@ -629,8 +628,9 @@ namespace atl {
 
 
                 atl::StackEntry<REAL_T>& entry = tape.stack[index];
-                exp.PushIds(entry.ids);
-
+                if (entry.ids.size() == 0) {
+                    exp.PushIds(entry.ids);
+                }
                 entry.w = this->info;
                 entry.w->count++;
                 entry.w->is_nl = true;
