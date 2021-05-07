@@ -30,6 +30,7 @@
 #include "Utilities/flat_set.hpp"
 #include "third_party/flat_hash_map/bytell_hash_map.hpp"
 #include "Utilities/flat_map.hpp"
+#include "Utilities/lazyflatset.hpp"
 
 namespace atl {
 
@@ -50,7 +51,7 @@ namespace atl {
     template<typename REAL_T>
     struct less_variable_info {
 
-        bool operator()(const std::shared_ptr<VariableInfo<REAL_T> >& lhs, const std::shared_ptr<VariableInfo<REAL_T> >& rhs) const {
+        inline bool operator()(const std::shared_ptr<VariableInfo<REAL_T> >& lhs, const std::shared_ptr<VariableInfo<REAL_T> >& rhs) const {
             return lhs->id < rhs->id;
         }
     };
@@ -70,9 +71,9 @@ namespace atl {
         uint32_t min_id = std::numeric_limits<uint32_t>::max();
         uint32_t max_id = std::numeric_limits<uint32_t>::min();
 
-        typedef flat_set<VariableInfoPtr, atl::less_variable_info<REAL_T> > vi_storage;
+        typedef rs::LazyFlatSet<VariableInfoPtr, atl::less_variable_info<REAL_T> > vi_storage;
         typedef typename vi_storage::iterator vi_iterator;
-        typedef typename vi_storage::reverse_iterator vi_riterator;
+//        typedef typename vi_storage::reverse_iterator vi_riterator;
         bool is_nl = false;
         vi_storage ids;
         vi_storage nl_ids;
@@ -144,7 +145,7 @@ namespace atl {
             first.resize(0);
             second.resize(0);
             third.resize(0);
-            ids.clear_no_resize(); //clear();
+            ids.clear();//clear_no_resize(); //clear();
             pushed_ids.clear();
             id_list.clear();
             //            nl_ids.clear();
