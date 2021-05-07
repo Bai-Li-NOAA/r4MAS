@@ -13,7 +13,8 @@
 
 #ifndef TAPE_HPP
 #define TAPE_HPP
-#define ATL_THREAD_SAFE
+
+//#define ATL_THREAD_SAFE
 
 #include "Platform.hpp"
 
@@ -691,6 +692,7 @@ namespace atl {
         }
 
         void AccumulateFirstOrder(bool reset = true) {
+            
             if (recording) {
 
                 if (reset) {
