@@ -30,7 +30,7 @@
 #include <cmath>
 #include "Utilities/flat_set.hpp"
 #include "third_party/flat_hash_map/bytell_hash_map.hpp"
-#include "third_party/sparsehash-c11/sparsehash/dense_hash_set"
+
 #include "Utilities/flat_map.hpp"
 
 namespace atl {
@@ -72,9 +72,9 @@ namespace atl {
         uint32_t min_id = std::numeric_limits<uint32_t>::max();
         uint32_t max_id = std::numeric_limits<uint32_t>::min();
 
-        typedef google::dense_hash_set<VariableInfoPtr, atl::less_variable_info<REAL_T> > vi_storage;
+        typedef flat_set<VariableInfoPtr, atl::less_variable_info<REAL_T> > vi_storage;
         typedef typename vi_storage::iterator vi_iterator;
-//         typedef typename vi_storage::reverse_iterator vi_riterator;
+        typedef typename vi_storage::reverse_iterator vi_riterator;
         bool is_nl = false;
         vi_storage ids;
         vi_storage nl_ids;
