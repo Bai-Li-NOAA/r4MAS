@@ -1040,11 +1040,11 @@ namespace mas {
             sum_of_Z += Z[index];
 
 
-            //            for (int f = 0; f < fleets.size(); f++) {
-            //                variable ff = fleets[f]->area_season_fishing_mortality[this->area->id][season]->Evaluate(year, (season - 1));
-            //                this->fishing_mortality_total[year * this->seasons + (season - 1)] += ff;
-            //            }
-            //            this->fishing_mortality_total[year * this->seasons + (season - 1)] /= static_cast<REAL_T> (fleets.size());
+            for (int f = 0; f < fleets.size(); f++) {
+                variable ff = fleets[f]->area_season_fishing_mortality[this->area->id][season]->Evaluate(year, (season - 1));
+                this->fishing_mortality_total[year * this->seasons + (season - 1)] += ff;
+            }
+            this->fishing_mortality_total[year * this->seasons + (season - 1)] /= static_cast<REAL_T> (fleets.size());
 
         }
 
