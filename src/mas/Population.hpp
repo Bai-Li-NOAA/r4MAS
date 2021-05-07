@@ -1000,6 +1000,7 @@ namespace mas {
          * @param season
          */
         inline void CalculateMortality(const int& year, const int& season, const int& age) {
+
             std::vector< std::shared_ptr<Fleet<REAL_T> > >& fleets = this->area->seasonal_fleet_operations[season];
             this->sum_of_Z = 0.0;
 
@@ -1039,12 +1040,13 @@ namespace mas {
             S[index] = mas::exp(-1.0 * Z[index]);
             sum_of_Z += Z[index];
 
-
-            for (int f = 0; f < fleets.size(); f++) {
-                variable ff = fleets[f]->area_season_fishing_mortality[this->area->id][season]->Evaluate(year, (season - 1));
-                this->fishing_mortality_total[year * this->seasons + (season - 1)] += ff;
+            if (age == this->ages.size() - 1) {
+                for (int f = 0; f < fleets.size(); f++) {
+                    variable ff = fleets[f]->area_season_fishing_mortality[this->area->id][season]->Evaluate(year, (season - 1));
+                    this->fishing_mortality_total[year * this->seasons + (season - 1)] += ff;
+                }
+                this->fishing_mortality_total[year * this->seasons + (season - 1)] /= static_cast<REAL_T> (fleets.size());
             }
-            this->fishing_mortality_total[year * this->seasons + (season - 1)] /= static_cast<REAL_T> (fleets.size());
 
         }
 
