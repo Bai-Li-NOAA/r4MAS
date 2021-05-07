@@ -146,7 +146,7 @@ namespace atl {
             first.resize(0);
             second.resize(0);
             third.resize(0);
-            ids.clear_no_resize(); //clear();
+            ids.clear();//.clear_no_resize(); //clear();
             pushed_ids.clear();
             id_list.clear();
             //            nl_ids.clear();
