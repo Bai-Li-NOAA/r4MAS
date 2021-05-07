@@ -138,9 +138,9 @@ namespace atl {
 
         virtual REAL_T External2Internal(REAL_T val, REAL_T min_, REAL_T max_)const {
             if (val == min_) {
-                val += static_cast<REAL_T>(1e-8);
+                val += static_cast<REAL_T> (1e-8);
             } else if (val == max_) {
-                val -= static_cast<REAL_T>(1e-8);
+                val -= static_cast<REAL_T> (1e-8);
             }
 
             REAL_T p = ((val) - min_) / (max_ - min_);
@@ -331,7 +331,9 @@ namespace atl {
 
             std::cout << "THIRD_ORDER_REVERSE" << std::endl;
             atl::StackEntry<REAL_T>& entry = tape.stack[index];
-            exp.PushIds(entry.ids);
+            if (entry.ids.size() == 0) {
+                exp.PushIds(entry.ids);
+            }
 
             entry.w = var.info;
             entry.w->count++;
@@ -648,7 +650,7 @@ namespace atl {
                             entry.min_id = std::min((*it)->id, entry.min_id);
                             entry.max_id = std::max((*it)->id, entry.max_id);
                             entry.first[i] = exp.EvaluateFirstDerivative((*it)->id);
-                          
+
                             i++;
                         }
                         break;
