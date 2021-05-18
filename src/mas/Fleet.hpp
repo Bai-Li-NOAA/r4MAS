@@ -435,7 +435,7 @@ namespace mas {
 
                         for (int a = 0; a <this->ages; a++) {
                             index = y * this->seasons * this->ages + (s) * this->ages + a;
-
+                            std::cout<<catch_at_age[index] <<" / "<<total_c<<"\n";
                             catch_proportion_at_age[index] = catch_at_age[index] / total_c;
                             catch_proportion_at_age_males[index] = catch_at_age_males[index] / total_c_males;
                             catch_proportion_at_age_females[index] = catch_at_age_females[index] / total_c_females;
