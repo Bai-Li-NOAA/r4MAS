@@ -652,7 +652,7 @@ namespace atl {
                             entry.max_id = std::max((*it)->id, entry.max_id);
                             entry.first[i] = exp.EvaluateFirstDerivative((*it)->id);
                             if(entry.first[i] != entry.first[i] ){
-                            std::cout<<"\n\n"<<exp.ToExpressionTemplateString()<<"\n\n";
+                            std::cout<<"\n\n"<<exp.ToDynamic()->ToString()<<"\n\n";
                             raise(SIGSEGV);
                             }
                           
