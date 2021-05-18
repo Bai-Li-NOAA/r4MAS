@@ -14,6 +14,9 @@
 #ifndef VARIABLE_HPP
 #define VARIABLE_HPP
 
+#include <signal.h>
+
+
 #include "VariableInfo.hpp"
 #include "Expression.hpp"
 #include "Transformations.h"
@@ -648,6 +651,9 @@ namespace atl {
                             entry.min_id = std::min((*it)->id, entry.min_id);
                             entry.max_id = std::max((*it)->id, entry.max_id);
                             entry.first[i] = exp.EvaluateFirstDerivative((*it)->id);
+                            if(entry.first[i] != entry.first[i] ){
+                            raise(SIGSEGV);
+                            }
                           
                             i++;
                         }
