@@ -5231,7 +5231,7 @@ public:
 			}
 		}
 		std::cout<<__LINE__<<std::endl;
-
+		std::cout<<"id =>"<<nll->id<<std::endl;
 		info.likelihood_components[nll->id] = ln;
 	}
 
