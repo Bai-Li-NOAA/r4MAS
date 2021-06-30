@@ -7382,12 +7382,14 @@ public:
 		}
 
 		std::cout << "\n\n";
-		for (int i = 0; i < NLLBase::nll_submodels.size(); i++) {
-			NLLBase::nll_submodels[i]->AddToMAS(mas->mas_instance.info);
-		}
+
 
 		for (int i = 0; i < MASSubModel::submodels.size(); i++) {
 			MASSubModel::submodels[i]->AddToMAS(mas->mas_instance.info);
+		}
+		
+		for (int i = 0; i < NLLBase::nll_submodels.size(); i++) {
+			NLLBase::nll_submodels[i]->AddToMAS(mas->mas_instance.info);
 		}
 
 		mas->mas_instance.info.CreateModel();
