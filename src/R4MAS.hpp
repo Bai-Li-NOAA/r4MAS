@@ -5131,7 +5131,7 @@ public:
 
 	}
 };
-int NLLBase::id_g = 2;
+int NLLBase::id_g = 1;
 std::vector<NLLBase*> NLLBase::nll_submodels;
 
 class Lognormal: public NLLBase {
