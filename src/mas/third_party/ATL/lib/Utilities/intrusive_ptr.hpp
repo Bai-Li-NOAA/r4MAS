@@ -65,6 +65,7 @@ public:
 	}
 
 	intrusive_ptr& operator=(const intrusive_ptr &other) {
+		std::cout<<"intrusive_prt"<<std::endl;
 		return operator=(other.ptr_m);
 	}
 
