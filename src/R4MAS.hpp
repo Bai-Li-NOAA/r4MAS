@@ -5163,21 +5163,39 @@ public:
 	}
 
 	virtual void AddToMAS(mas::Information<double> &info) {
+		std::cout<<__LINE__<<std::endl;
 		atl::intrusive_ptr<mas::DataObject<double> > lambda_data(
 				new mas::DataObject<double>());
+				std::cout<<__LINE__<<std::endl;
+
 		atl::intrusive_ptr<mas::Lognormal<double> > ln = new mas::Lognormal<
 				double>();
+				std::cout<<__LINE__<<std::endl;
+
 		mas::Lognormal<double> *nll = ln.get();
+				std::cout<<__LINE__<<std::endl;
+
 		ln->use_bias_correction = this->use_bias_correction;
+				std::cout<<__LINE__<<std::endl;
+
 		nll->lambda = lambda_data;
+				std::cout<<__LINE__<<std::endl;
+
 		nll->id = this->id;
+				std::cout<<__LINE__<<std::endl;
+
 		if (this->has_lambdas) {
+					std::cout<<__LINE__<<std::endl;
+
 			nll->lambda = new mas::DataObject<double>();
 			mas::DataObject<double> *d = nll->lambda.get();
 			int prod = 1.0;
+					std::cout<<__LINE__<<std::endl;
+
 			for (int i = 0; i < this->lambda_dimensions.size(); i++) {
 				prod *= this->lambdas[i];
 			}
+		std::cout<<__LINE__<<std::endl;
 
 			if (this->lambdas.size() != prod) {
 				std::cout
@@ -5187,23 +5205,32 @@ public:
 
 			switch (lambdas.size()) {
 			case 1:
+							std::cout<<__LINE__<<std::endl;
+
 				d->imax = this->lambda_dimensions[0];
 				break;
 			case 2:
+							std::cout<<__LINE__<<std::endl;
+
 				d->imax = this->lambda_dimensions[0];
 				d->jmax = this->lambda_dimensions[1];
 				break;
 			case 3:
+							std::cout<<__LINE__<<std::endl;
+
 				d->imax = this->lambda_dimensions[0];
 				d->jmax = this->lambda_dimensions[1];
 				d->kmax = this->lambda_dimensions[2];
 				break;
 			}
+					std::cout<<__LINE__<<std::endl;
+
 			for (int i = 0; i < this->lambdas.size(); i++) {
 
 				d->data.push_back(this->lambdas[i]);
 			}
 		}
+		std::cout<<__LINE__<<std::endl;
 
 		info.likelihood_components[nll->id] = ln;
 	}
