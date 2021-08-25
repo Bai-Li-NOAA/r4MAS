@@ -753,14 +753,14 @@ namespace atl {
 //            }
 //
 //
-//            atl::RealMatrix<T> ret_m(this->parameters_m.size(), this->parameters_m.size());
+            atl::RealMatrix<T> ret_m(this->parameters_m.size(), this->parameters_m.size());
 //            for (size_t i = 0; i < this->parameters_m.size(); i++) {
 //                for (size_t j = 0; j < this->parameters_m.size(); j++) {
 //
 //                    ret_m(i, j) = inverse_hessian(i, j) * outer_product(i, j);
 //                }
 //            }
-
+ ret_m = inverse_hessian*jacobian;
             return ret_m;
         }
 
