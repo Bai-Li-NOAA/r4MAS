@@ -722,10 +722,10 @@ namespace atl {
 
             atl::Variable<T>::tape.AccumulateSecondOrder();
             atl::RealMatrix<T> inverse_hessian(this->parameters_m.size(), this->parameters_m.size());
-            atl::RealMatrix<T> jacobian(this->parameters_m.size(), 1);
+            atl::RealMatrix<T> jacobian(1,this->parameters_m.size());
 
             for (int i = 0; i < this->parameters_m.size(); i++) {
-                jacobian(i,0) = atl::Variable<T>::tape.Value(this->parameters_m[i]->info->id);
+                jacobian(0,i) = atl::Variable<T>::tape.Value(this->parameters_m[i]->info->id);
                 for (int j = 0; j < this->parameters_m.size(); j++) {
                     T dxx = atl::Variable<T>::tape.Value(this->parameters_m[i]->info->id,
                             this->parameters_m[j]->info->id);
