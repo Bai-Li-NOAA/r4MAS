@@ -760,7 +760,7 @@ namespace atl {
 //                    ret_m(i, j) = inverse_hessian(i, j) * outer_product(i, j);
 //                }
 //            }
- ret_m = inverse_hessian*jacobian;
+            ret_m = inverse_hessian*jacobian;
             return ret_m;
         }
 
