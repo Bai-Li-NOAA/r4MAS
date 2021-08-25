@@ -738,7 +738,7 @@ namespace atl {
             inverse_hessian.Invert();
             //            std::cout<<"inverse hessian\n\n"<<
             //                    inverse_hessian<<"\n\n\n";
-            ret_m = inverse_hessian*jacobian;
+         //   ret_m = inverse_hessian*jacobian;
 //            //
 //            std::vector<T> se(this->parameters_m.size());
 //            for (int i = 0; i < this->parameters_m.size(); i++) {
