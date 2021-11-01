@@ -198,7 +198,7 @@ namespace mas {
 
         virtual const variable CalculateEquilibriumSpawningBiomass(const variable& SB0, variable equilibrium_spawning_biomass) {
             return this->GetAlpha() * equilibrium_spawning_biomass *
-                    std::exp(-1.0 * this->GetBeta() * equilibrium_spawning_biomass);
+                    mas::exp(-1.0 * this->GetBeta() * equilibrium_spawning_biomass);
         }
 
         virtual const variable CalculateEquilibriumRecruitment(variable spr, variable spr_F0) {
