@@ -192,9 +192,9 @@ namespace mas {
             return this->beta.GetValue();
         }
 
-        virtual const variable CalculateEquilibriumSpawningBiomass(REAL_T spawing_biomass_per_recruit) {
-            return (std::log(spawing_biomass_per_recruit * this->GetAlpha()) / this->GetBeta());
-        }
+//        virtual const variable CalculateEquilibriumSpawningBiomass(REAL_T spawing_biomass_per_recruit) {
+//            return (std::log(spawing_biomass_per_recruit * this->GetAlpha()) / this->GetBeta());
+//        }
 
         virtual const REAL_T CalculateEquilibriumSpawningBiomass(const variable& SB0, variable equilibrium_spawning_biomass) {
             return this->GetAlpha() * equilibrium_spawning_biomass *
