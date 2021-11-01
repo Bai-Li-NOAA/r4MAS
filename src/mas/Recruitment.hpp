@@ -192,11 +192,11 @@ namespace mas {
             return this->beta.GetValue();
         }
 
-        virtual const REAL_T CalculateEquilibriumSpawningBiomass(REAL_T spawing_biomass_per_recruit) {
-            return (std::log(spawing_biomass_per_recruit * this->GetAlpha())/this->GetBeta());
+        virtual const variable CalculateEquilibriumSpawningBiomass(REAL_T spawing_biomass_per_recruit) {
+            return (std::log(spawing_biomass_per_recruit * this->GetAlpha()) / this->GetBeta());
         }
 
-        virtual const REAL_T CalculateEquilibriumRecruitment(REAL_T equilibrium_spawning_biomass) {
+        virtual const REAL_T CalculateEquilibriumRecruitment(const variable& SB0, variable equilibrium_spawning_biomass) {
             return this->GetAlpha() * equilibrium_spawning_biomass *
                     std::exp(-1.0 * this->GetBeta() * equilibrium_spawning_biomass);
         }
@@ -262,7 +262,7 @@ namespace mas {
                     SB0)) * mas::mfexp(-0.5 * this->sigma_r * this->sigma_r);
         }
 
-        virtual const REAL_T CalculateEquilibriumSpawningBiomass(REAL_T spawing_biomass_per_recruit) {
+        virtual const variable CalculateEquilibriumSpawningBiomass(const variable& SB0, variable spawing_biomass_per_recruit) {
             return 0.0;
         }
 
@@ -345,17 +345,17 @@ namespace mas {
             return this->beta.GetValue();
         }
 
-        virtual const variable CalculateEquilibriumSpawningBiomass(const variable& SB0 ,variable spawing_biomass_per_recruit) {
-         
-             return ( 4.0 * this->h* mas::exp(this->log_R0) * spawing_biomass_per_recruit-SB0 *(1.0-this->h)) / (5.0*this->h -1.0);
+        virtual const variable CalculateEquilibriumSpawningBiomass(const variable& SB0, variable spawing_biomass_per_recruit) {
+
+            return ( 4.0 * this->h * mas::exp(this->log_R0) * spawing_biomass_per_recruit - SB0 * (1.0 - this->h)) / (5.0 * this->h - 1.0);
             //   return this->GetAlpha() * spawing_biomass_per_recruit - this->GetBeta();
         }
 
         virtual const REAL_T CalculateEquilibriumRecruitment(REAL_T equilibrium_spawning_biomass) {
-             //                                                R_eq[i] = (R0 / ((5.0 * steep - 1.0) * spr[i]))*
-                //                                                        (BC * 4.0 * steep * spr[i] - spr_F0 * (1.0 - steep));
-//             (mas::exp(this->log_R0) / ((5.0 * this->h - 1.0) * spr[i]))*
-//                                                                       (BC * 4.0 * this->h * spr[i] - spr_F0 * (1.0 - this->h));
+            //                                                R_eq[i] = (R0 / ((5.0 * steep - 1.0) * spr[i]))*
+            //                                                        (BC * 4.0 * steep * spr[i] - spr_F0 * (1.0 - steep));
+            //             (mas::exp(this->log_R0) / ((5.0 * this->h - 1.0) * spr[i]))*
+            //                                                                       (BC * 4.0 * this->h * spr[i] - spr_F0 * (1.0 - this->h));
             return (this->GetAlpha() * equilibrium_spawning_biomass) /
                     (this->GetBeta() + equilibrium_spawning_biomass);
         }
@@ -423,6 +423,10 @@ namespace mas {
             return rr;
         }
 
+        virtual const variable CalculateEquilibriumSpawningBiomass(const variable& SB0, variable spawing_biomass_per_recruit) {
+            return ( 4.0 * this->h * mas::exp(this->log_R0) * spawing_biomass_per_recruit - SB0 * (1.0 - this->h)) / (5.0 * this->h - 1.0);
+        }
+
         virtual const variable CalculateEquilibriumRecruitment(variable spr, variable spr_F0) {
 
             return (mas::exp(this->log_R0) / ((5.0 * this->h - 1.0) * spr))*
@@ -485,7 +489,8 @@ namespace mas {
         }
 
         virtual const REAL_T CalculateEquilibriumSpawningBiomass(REAL_T spawing_biomass_per_recruit) {
-            return this->GetAlpha() * spawing_biomass_per_recruit - this->GetBeta();
+            return ( 4.0 * this->h * mas::exp(this->log_R0) * spawing_biomass_per_recruit - SB0 * (1.0 - this->h)) / (5.0 * this->h - 1.0);
+            //return this->GetAlpha() * spawing_biomass_per_recruit - this->GetBeta();
         }
 
         virtual const std::string ToJSONString() {
