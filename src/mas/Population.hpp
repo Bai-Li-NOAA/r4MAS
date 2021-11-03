@@ -1520,7 +1520,7 @@ namespace mas {
             return ret;
         }
 
-        void CalculateMSY(REAL_T maxF = 1.0, REAL_T step = 0.01) {
+        void CalculateMSY(REAL_T maxF = 1.0, REAL_T step = 0.001) {
             /**
              * This code was ported from BAM. Original Author: Kyle Shertzer
              */
