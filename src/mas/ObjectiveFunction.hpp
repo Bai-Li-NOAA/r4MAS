@@ -167,7 +167,7 @@ namespace mas {
             typename mas::Information<REAL_T>::area_iterator ait;
             
             for(ait = this->mas_instance.info.areas.begin(); ait != this->mas_instance.info.areas.end(); ait++){
-                (*ait)->Finalize();
+                (*ait).second->Finalize();
             }
             
             //            mas_instance.Report();
