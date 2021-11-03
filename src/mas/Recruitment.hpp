@@ -347,7 +347,7 @@ namespace mas {
 
         virtual const variable CalculateEquilibriumSpawningBiomass(const variable& SB0, variable spawing_biomass_per_recruit) {
 
-            return ( 4.0 * this->h * mas::exp(this->log_R0*.5) * spawing_biomass_per_recruit - SB0 * (1.0 - this->h)) / (5.0 * this->h - 1.0);
+            return ( 4.0 * this->h * mas::exp(this->log_R0) * spawing_biomass_per_recruit - SB0 * (1.0 - this->h)) / (5.0 * this->h - 1.0);
             //   return this->GetAlpha() * spawing_biomass_per_recruit - this->GetBeta();
         }
 
