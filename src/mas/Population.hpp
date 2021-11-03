@@ -1571,12 +1571,12 @@ namespace mas {
 
                 //is this ssb_unfished?
                 reprod[a] = this->weight_at_spawning[index].GetValue()
-                        * (this->maturity[a]);// * this->sex_fraction_value);
+                        * (this->maturity[a] * this->sex_fraction_value);
                 spr_F0 += N0[a] * reprod[a];
-                selL[a] = this->sum_selectivity[index]; //.GetValue();
-                selZ[a] = this->sum_selectivity[index]; //.GetValue();
+                selL[a] = this->sum_selectivity[index];
+                selZ[a] = this->sum_selectivity[index]; 
                 M_age[a] = this->M[a].GetValue();
-                wgt[a] = this->weight_at_catch_time[index]; //.GetValue();
+                wgt[a] = this->weight_at_catch_time[index]; 
             }
 
             std::valarray<variable_t> L_age(nages); //#landings at age
