@@ -34,6 +34,7 @@ namespace mas {
         variable_t SSB_msy = 0;
         variable_t B_msy = 0;
         variable_t E_msy = 0;
+       
 
         //F30
         variable_t F30 = 0;
