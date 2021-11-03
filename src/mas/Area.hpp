@@ -477,6 +477,10 @@ namespace mas {
                 }
             }
         }
+        
+        void Finalize(){
+            this->msy.F_msy /=nsubpopulations;
+        }
 
         /**
          * Returns a reference to the catch biomass component for the

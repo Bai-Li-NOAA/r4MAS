@@ -163,6 +163,13 @@ namespace mas {
                 }
 
             }
+            
+            typename mas::Information<REAL_T>::area_iterator ait;
+            
+            for(ait = this->mas_instance.info.areas.begin(); ait != this->mas_instance.info.areas.end(); ait++){
+                (*ait).Finalize();
+            }
+            
             //            mas_instance.Report();
             mas::JSONOutputGenerator<REAL_T> json;
             std::ofstream output(this->ouput_path.data());
