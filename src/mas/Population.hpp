@@ -1574,9 +1574,9 @@ namespace mas {
                         * (this->maturity[a] * this->sex_fraction_value);
                 spr_F0 += N0[a] * reprod[a];
                 selL[a] = this->sum_selectivity[index];
-                selZ[a] = this->sum_selectivity[index]; 
+                selZ[a] = this->sum_selectivity[index];
                 M_age[a] = this->M[a].GetValue();
-                wgt[a] = this->weight_at_catch_time[index]; 
+                wgt[a] = this->weight_at_catch_time[index];
             }
 
             std::valarray<variable_t> L_age(nages); //#landings at age
@@ -1628,13 +1628,10 @@ namespace mas {
                         / (1.0 - mas::exp(-1. * Z_age[nages - 1]));
 
                 spr[i] = sum_product(N_age, reprod);
-                //                                                R_eq[i] = (R0 / ((5.0 * steep - 1.0) * spr[i]))*
-                //                                                        (BC * 4.0 * steep * spr[i] - spr_F0 * (1.0 - steep));
-                SSB_eq[i] = this->recruitment_model->CalculateEquilibriumSpawningBiomass(this->SB0, spr[i]);//sum_product(N_age_spawn, reprod);
-                R_eq[i] = this->recruitment_model->Evaluate(this->SB0,SSB_eq[i]);/*this->CalculateEquilibriumRecruitment()*/
-                         /// CalculateEquilibriumRecruitment(spr[i], spr_F0);
-                //                        this->recruitment_model->CalculateEquilibriumSpawningBiomass(
-                //                        spr[i])); //*1000*this->sex_fraction_value;
+
+                SSB_eq[i] = this->recruitment_model->CalculateEquilibriumSpawningBiomass(this->SB0, spr[i]);
+                R_eq[i] = this->recruitment_model->Evaluate(this->SB0*0.91, SSB_eq[i]);
+
 
                 if (R_eq[i] < 0.0000001) {
                     R_eq[i] = 0.0000001;
@@ -1817,31 +1814,7 @@ namespace mas {
 
                 this->F_over_F_msy[i] = this->fishing_mortality_total[i] / this->msy.F_msy;
             }
-            //
-            //            std::cout << std::scientific;
-            //            //
-            //            std::cout << "\n\nFmax: " << maxF << "\n";
-            //            std::cout << "Step: " << step << "\n";
-            //            std::cout << "\n\nF_msy: " << F[max_index] << "\n";
-            //            std::cout << "F30: " << F[F30_out] << "\n";
-            //            std::cout << "F35: " << F[F35_out] << "\n";
-            //            std::cout << "F40: " << F[F40_out] << "\n";
-            //            spr_msy_out = spr[max_index];
-            //            std::cout << "msy: " << this->msy.msy << "\n";
-            //            std::cout << "spr_msy: " << spr[max_index] << "\n";
-            //            std::cout << "SR_msy: " << (spr_msy_out / spr_F0).GetValue() << "\n";
-            //            //                        std::cout << "D_msy_out" << D_eq[max_index] << "\n";
-            //            std::cout << "R_msy: " << R_eq[max_index] << "\n";
-            //            std::cout << "SSB_msy: " << this->msy.SSB_msy << "\n";
-            //            std::cout << "B_msy: " << this->msy.B_msy << "\n";
-            //            std::cout << "E_msy: " << E_eq[max_index] << "\n";
-            //            std::cout << "R0: " << this->R0 << "\n";
-            //            std::cout << "S0: " << this->S0 << "\n";
-            //            std::cout << "E_msy: " << E_eq[max_index] << "\n";
-            //            std::cout << "Alpha: " << this->recruitment_model->GetAlpha() << "\n";
-            //            std::cout << "Beta: " << this->recruitment_model->GetBeta() << "\n\n";
-            //
-            //            mas::VariableTrait<REAL_T>::SetRecording(recording);
+
 
         }
 
