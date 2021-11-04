@@ -1684,8 +1684,8 @@ namespace mas {
 
 
                 L_eq[i] = sum_product(L_age, wgt);
-                E_eq[i] = sum(L_age) / sum(N_age);
-                L_eq_knum[i] = (sum(L_age) / 1000.0);
+                E_eq[i] = this->sum(L_age) / this->sum(N_age);
+                L_eq_knum[i] = (this->sum(L_age) / 1000.0);
 
             }
             int max_index = 0;
