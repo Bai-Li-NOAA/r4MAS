@@ -698,7 +698,7 @@ namespace mas {
                     temp += F * this->S[index2].GetValue() + this->M[j].GetValue();
                 }
             }
-            return temp;
+//            return temp;
         }
 
         inline REAL_T CalculateYieldPerRecruit(REAL_T F) {
