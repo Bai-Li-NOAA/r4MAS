@@ -1571,13 +1571,13 @@ namespace mas {
                         + (season) * this->ages.size() + a;
 
                 //is this ssb_unfished?
-                reprod[a] = this->weight_at_spawning[index].GetValue()
+                reprod[a] = this->weight_at_spawning[index]/1000.0
                         * (this->maturity[a] * this->sex_fraction_value);
                 spr_F0 += N0[a] * reprod[a];
                 selL[a] = this->sum_selectivity[index];
                 selZ[a] = this->sum_selectivity[index];
                 M_age[a] = this->M[a].GetValue();
-                wgt[a] = this->weight_at_catch_time[index];
+                wgt[a] = this->weight_at_catch_time[index]/1000.0;
             }
 
             std::valarray<variable_t> L_age(nages); //#landings at age
@@ -1613,24 +1613,19 @@ namespace mas {
 
                 for (int iage = 0; iage < nages; iage++) {
                     N_age_spawn[iage] = (N_age[iage]
-                            * mas::exp(
-                            (-1.0 * Z_age[iage]
+                            * mas::exp((-1.0 * Z_age[iage]
                             * this->spawning_season_offset)));
                 }
+
+                
                 N_age_spawn[nages - 1] =
                         (N_age_spawn[nages - 2]
-                        * (mas::exp(
-                        -1.
-                        * (Z_age[nages - 2]
-                        * (1.0
-                        - this->spawning_season_offset)
-                        + Z_age[nages - 1]
-                        * this->spawning_season_offset))))
-                        / (1.0 - mas::exp(-1. * Z_age[nages - 1]));
+                        * (mas::exp(-1.0* (Z_age[nages - 2]* (1.0- this->spawning_season_offset)+ Z_age[nages - 1]* this->spawning_season_offset))))
+                        / (1.0 - mas::exp(-1.0 * Z_age[nages - 1]));
 
                 spr[i] = sum_product(N_age, reprod);
 
-                SSB_eq[i] = this->recruitment_model->CalculateEquilibriumSpawningBiomass(this->SB0, spr[i]*0.91);
+                SSB_eq[i] = this->recruitment_model->CalculateEquilibriumSpawningBiomass(this->SB0, spr[i]);
                 R_eq[i] = this->recruitment_model->Evaluate(this->SB0, SSB_eq[i]);
 
 
