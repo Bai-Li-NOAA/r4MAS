@@ -528,7 +528,7 @@ namespace mas {
                                 -1.0 * this->spawning_season_offset * this->M[a]);
 
                         s_per_recruit[y] += ntemp0
-                                /* (this->fecundity_at_age[index] * this->M[a])*/
+                                * (this->fecundity_at_age[index] * this->M[a])
                                 * mas::exp(
                                 -1.0 * this->spawning_season_offset * this->M[a]);
 
@@ -550,8 +550,8 @@ namespace mas {
                             * this->M[plus_group]);
 
                     s_per_recruit[y] += ntemp0
-                            /* (this->fecundity_at_age[index]
-                            * this->M[this->ages.size() - 1])*/
+                            * (this->fecundity_at_age[index]
+                            * this->M[this->ages.size() - 1])
                             * mas::exp(
                             -1.0 * this->spawning_season_offset
                             * this->M[plus_group]);
