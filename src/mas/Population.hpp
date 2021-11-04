@@ -525,15 +525,15 @@ namespace mas {
                         sb_per_recruit[y] += ntemp0
                                 * (this->weight_at_spawning[index] * this->M[a])
                                 * mas::exp(
-                                -1.0 * this->spawning_season_offset * M[a]);
+                                -1.0 * this->spawning_season_offset * this->M[a]);
 
                         s_per_recruit[y] += ntemp0
-                                * (this->fecundity_at_age[index] * this->M[a])
+                                /* (this->fecundity_at_age[index] * this->M[a])*/
                                 * mas::exp(
-                                -1.0 * this->spawning_season_offset * M[a]);
+                                -1.0 * this->spawning_season_offset * this->M[a]);
 
                         ntemp0 *= mas::exp(
-                                -1.0 * this->spawning_season_offset * M[a]);
+                                -1.0 * this->spawning_season_offset * this->M[a]);
 
                     }
 
@@ -547,14 +547,14 @@ namespace mas {
                             * this->M[this->ages.size() - 1])
                             * mas::exp(
                             -1.0 * this->spawning_season_offset
-                            * M[plus_group]);
+                            * this->M[plus_group]);
 
                     s_per_recruit[y] += ntemp0
-                            * (this->fecundity_at_age[index]
-                            * this->M[this->ages.size() - 1])
+                            /* (this->fecundity_at_age[index]
+                            * this->M[this->ages.size() - 1])*/
                             * mas::exp(
                             -1.0 * this->spawning_season_offset
-                            * M[plus_group]);
+                            * this->M[plus_group]);
 
                 }
             }
@@ -698,6 +698,7 @@ namespace mas {
                     temp += F * this->S[index2].GetValue() + this->M[j].GetValue();
                 }
             }
+            return temp;
         }
 
         inline REAL_T CalculateYieldPerRecruit(REAL_T F) {
