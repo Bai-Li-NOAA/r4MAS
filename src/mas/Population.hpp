@@ -1571,13 +1571,13 @@ namespace mas {
                         + (season) * this->ages.size() + a;
 
                 //is this ssb_unfished?
-                reprod[a] = this->weight_at_spawning[index]/1000.0
+                reprod[a] = this->weight_at_spawning[index]
                         * (this->maturity[a] * this->sex_fraction_value);
                 spr_F0 += N0[a] * reprod[a];
                 selL[a] = this->sum_selectivity[index];
                 selZ[a] = this->sum_selectivity[index];
                 M_age[a] = this->M[a].GetValue();
-                wgt[a] = this->weight_at_catch_time[index]/1000.0;
+                wgt[a] = this->weight_at_catch_time[index];
             }
 
             std::valarray<variable_t> L_age(nages); //#landings at age
@@ -1625,7 +1625,7 @@ namespace mas {
 
                 spr[i] = sum_product(N_age, reprod);
 
-                SSB_eq[i] = this->recruitment_model->CalculateEquilibriumSpawningBiomass(this->SB0, spr[i]/spr_F0);
+                SSB_eq[i] = this->recruitment_model->CalculateEquilibriumSpawningBiomass(this->SB0, spr[i]);
                 R_eq[i] = this->recruitment_model->Evaluate(this->SB0, SSB_eq[i]);
 
 
