@@ -1431,8 +1431,10 @@ namespace mas {
 
                     this->numbers_at_age[index1] = this->numbers_at_age[index2]
                             * mas::exp(static_cast<REAL_T> (-1.0) * Z[index2]);
+                    
                     this->biomass_at_age[index1] = this->numbers_at_age[index1]
                             * this->weight_at_season_start[index1];
+                    
                     this->biomass_total[index] += this->biomass_at_age[index1];
                 }
 
@@ -1575,7 +1577,7 @@ namespace mas {
                         * (this->maturity[a] * this->sex_fraction_value);
                 spr_F0 += N0[a] * reprod[a];
                 selL[a] = this->sum_selectivity[index];
-                selZ[a] = this->sum_selectivity[index];
+                selZ[a] = this->Z[index];
                 M_age[a] = this->M[a].GetValue();
                 wgt[a] = this->weight_at_catch_time[index];
             }
