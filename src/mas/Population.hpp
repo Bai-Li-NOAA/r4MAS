@@ -1554,9 +1554,9 @@ namespace mas {
 
             std::vector<variable_t> N0(this->ages.size(), 1.0);
             for (int iage = 1; iage < nages; iage++) {
-                N0[iage] = N0[iage - 1] * std::exp(-1.0 * M[iage - 1]);
+                N0[iage] = N0[iage - 1] * mas::exp(-1.0 * M[iage - 1]);
             }
-            N0[nages - 1] = N0[nages - 2] * std::exp(-1.0 * M[nages - 2])
+            N0[nages - 1] = N0[nages - 2] * mas::exp(-1.0 * M[nages - 2])
                     / (1.0 - std::exp(-1.0 * M[nages - 1]));
 
             std::valarray<variable_t> reprod(nages);
