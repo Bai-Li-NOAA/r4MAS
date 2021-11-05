@@ -871,12 +871,13 @@ namespace mas {
 
         void CalculateInitialNumbersEquilibrium() {
 
+            variable_t init_f = 0.02;
             //note initial_numbers and initial_equilibrium_numbers vectors
             //are both size 3*ages.size()
 
             this->R0 = this->sex_fraction_value
                     * mas::exp(this->recruitment_model->log_R0);
-            
+
             this->initial_equilibrium_numbers[0] = this->sex_fraction_value
                     * mas::exp(this->recruitment_model->log_R0);
 
@@ -884,23 +885,23 @@ namespace mas {
             for (a = 1; a < this->ages.size(); a++) {
                 this->initial_equilibrium_numbers[a] =
                         this->initial_equilibrium_numbers[a - 1]
-                        * mas::exp( static_cast<REAL_T> (-1.0)* (this->M[a - 1])-0.02);
+                        * mas::exp(static_cast<REAL_T> (-1.0)* (this->M[a - 1]) - init_f);
             }
             variable m = this->M[a - 1];
-            
+
             variable sum;
             for (a = this->ages.size(); a < this->initial_equilibrium_numbers.size(); a++) {
 
                 this->initial_equilibrium_numbers[a] =
                         this->initial_equilibrium_numbers[a - 1]
-                        * mas::exp(static_cast<REAL_T> (-1.0) * (m)- 0.02);
-                
+                        * mas::exp(static_cast<REAL_T> (-1.0) * (m) - init_f);
+
                 sum += this->initial_equilibrium_numbers[a];
             }
 
             this->initial_equilibrium_numbers[this->ages.size() - 1] +=
                     sum + (this->initial_equilibrium_numbers[this->initial_equilibrium_numbers.size()
-                    - 1] * mas::exp(static_cast<REAL_T> (-1.0) * (m)))/ (1.0 - mas::exp(static_cast<REAL_T> (-1.0) * (m)));
+                    - 1] * mas::exp(static_cast<REAL_T> (-1.0) * (m)) - init_f) / (1.0 - mas::exp(static_cast<REAL_T> (-1.0) * (m)) - init_f);
         }
 
         void CalculateInitialNumbers() {
