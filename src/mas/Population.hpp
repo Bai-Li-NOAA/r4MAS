@@ -887,13 +887,14 @@ namespace mas {
                         * mas::exp( static_cast<REAL_T> (-1.0)* (this->M[a - 1]));
             }
             variable m = this->M[a - 1];
+            
             variable sum;
-            for (a = this->ages.size();
-                    a < this->initial_equilibrium_numbers.size(); a++) {
+            for (a = this->ages.size(); a < this->initial_equilibrium_numbers.size(); a++) {
 
                 this->initial_equilibrium_numbers[a] =
                         this->initial_equilibrium_numbers[a - 1]
                         * mas::exp(static_cast<REAL_T> (-1.0) * (m));
+                
                 sum += this->initial_equilibrium_numbers[a];
             }
 
