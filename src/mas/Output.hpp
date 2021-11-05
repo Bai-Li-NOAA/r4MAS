@@ -2146,6 +2146,10 @@ namespace mas {
                 males.AddMember("fishing_mortality", mfmort, allocator);
 
                 Popobject.AddMember("males", males, allocator);
+                
+                undiff.AddMember("SB0",
+                            *(*pit).second.SB0,
+                            allocator);
 
                 rapidjson::Value urecruits(rapidjson::kObjectType);
                 urecruits.AddMember("units", "1000 fish", allocator);
