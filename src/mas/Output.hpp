@@ -2148,7 +2148,7 @@ namespace mas {
                 Popobject.AddMember("males", males, allocator);
                 
                 undiff.AddMember("SB0",
-                            *(*pit).second->SB0,
+                            (*pit).second->SB0,
                             allocator);
 
                 rapidjson::Value urecruits(rapidjson::kObjectType);
