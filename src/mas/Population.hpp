@@ -884,7 +884,7 @@ namespace mas {
             for (a = 1; a < this->ages.size(); a++) {
                 this->initial_equilibrium_numbers[a] =
                         this->initial_equilibrium_numbers[a - 1]
-                        * mas::exp( static_cast<REAL_T> (-1.0)* (this->M[a - 1]));
+                        * mas::exp( static_cast<REAL_T> (-1.0)* (this->M[a - 1])-0.02);
             }
             variable m = this->M[a - 1];
             
@@ -893,7 +893,7 @@ namespace mas {
 
                 this->initial_equilibrium_numbers[a] =
                         this->initial_equilibrium_numbers[a - 1]
-                        * mas::exp(static_cast<REAL_T> (-1.0) * (m));
+                        * mas::exp(static_cast<REAL_T> (-1.0) * (m)- 0.02);
                 
                 sum += this->initial_equilibrium_numbers[a];
             }
@@ -909,7 +909,7 @@ namespace mas {
             for (a = 0; a < this->ages.size(); a++) {
 
                 this->initial_numbers[a] = (mas::exp(
-                        static_cast<REAL_T> (-1.0) * this->M[a] - this->initialF)
+                        static_cast<REAL_T> (-1.0) * this->M[a] - 0.02)
                         * this->initial_equilibrium_numbers[a]
                         * mas::exp(initial_deviations[a] - static_cast<REAL_T> (0.5)
                         /* mas::pow(sigma_r, static_cast<REAL_T> (2.0))*/));
