@@ -168,7 +168,7 @@ namespace mas {
         std::vector<REAL_T> recruitment_variance;
         std::vector<REAL_T> F_over_F_msy_variance;
 
-
+        size_t initial_numbers_carryout = 3;
 
 
         REAL_T MSY; //     maximum sustainable yield
@@ -243,8 +243,8 @@ namespace mas {
             immigrant_recruits.resize(years * seasons);
             emigrant_recruits.resize(years * seasons);
             abundance.resize(years * seasons);
-            initial_numbers.resize(this->ages.size() * 3);
-            initial_equilibrium_numbers.resize(this->ages.size() * 3);
+            initial_numbers.resize(this->ages.size() * this->initial_numbers_carryout);
+            initial_equilibrium_numbers.resize(this->ages.size() * this->initial_numbers_carryout);
             // these are all (fixed or estimated) PARAMETERS
 #warning hard coded vector initialS
             initialS.resize(this->ages.size(), 1.0); //fixed
@@ -876,6 +876,7 @@ namespace mas {
 
             this->R0 = this->sex_fraction_value
                     * mas::exp(this->recruitment_model->log_R0);
+            
             this->initial_equilibrium_numbers[0] = this->sex_fraction_value
                     * mas::exp(this->recruitment_model->log_R0);
 
@@ -883,9 +884,7 @@ namespace mas {
             for (a = 1; a < this->ages.size(); a++) {
                 this->initial_equilibrium_numbers[a] =
                         this->initial_equilibrium_numbers[a - 1]
-                        * mas::exp(
-                        static_cast<REAL_T> (-1.0)
-                        * (this->M[a - 1]));
+                        * mas::exp( static_cast<REAL_T> (-1.0)* (this->M[a - 1]));
             }
             variable m = this->M[a - 1];
             variable sum;
@@ -895,7 +894,7 @@ namespace mas {
                 this->initial_equilibrium_numbers[a] =
                         this->initial_equilibrium_numbers[a - 1]
                         * mas::exp(static_cast<REAL_T> (-1.0) * (m));
-//                sum += this->initial_equilibrium_numbers[a];
+                sum += this->initial_equilibrium_numbers[a];
             }
 
             this->initial_equilibrium_numbers[this->ages.size() - 1] +=
