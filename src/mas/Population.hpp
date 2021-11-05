@@ -1431,10 +1431,10 @@ namespace mas {
 
                     this->numbers_at_age[index1] = this->numbers_at_age[index2]
                             * mas::exp(static_cast<REAL_T> (-1.0) * Z[index2]);
-                    
+
                     this->biomass_at_age[index1] = this->numbers_at_age[index1]
                             * this->weight_at_season_start[index1];
-                    
+
                     this->biomass_total[index] += this->biomass_at_age[index1];
                 }
 
@@ -1604,34 +1604,34 @@ namespace mas {
 
                     //                    
                 }
-//                int A;
-//                for (A = 0; A < ages.size() - 1; A++) {
-//                    size_t index = year * this->seasons * this->ages.size()
-//                            + (season) * this->ages.size() + A;
-//                    variable_t sum;
-//                    for (int k = 0; k < ages.size() - 1; k++) {
-//                        size_t index2 = year * this->seasons * this->ages.size()
-//                                + (season) * this->ages.size() + A;
-//                        variable_t sum;
-//                        sum += F[i] * this->sum_selectivity[index2] + this->M[k];
-//                    }
-//                    sprb_f += this->maturity[A] * this->weight_at_catch_time[index] * mas::exp(
-//                            -1.0 * this->catch_season_offset * F[i] * this->sum_selectivity[index] -
-//                            this->spawning_season_offset * this->maturity[A] - sum);
-//                }
-//
-//                variable_t sum;
-//                for (int k = 0; k < ages.size() - 1; k++) {
-//                    size_t index2 = year * this->seasons * this->ages.size()
-//                            + (season) * this->ages.size() + A;
-//                    variable_t sum;
-//                    sum += F[i] * this->sum_selectivity[index2] + this->M[k];
-//                }
-//                size_t index = year * this->seasons * this->ages.size()
-//                            + (season) * this->ages.size() + A;
-//                sprb_f += this->maturity[A] * this->weight_at_catch_time[index] * mas::exp(
-//                        -1.0 * this->catch_season_offset * F[i] * this->sum_selectivity[index] -
-//                        this->spawning_season_offset * this->M[A] - sum)/ (1.0- mas::exp(-1.0*(F[i]*this->sum_selectivity[index]-this->M[A])));
+                //                int A;
+                //                for (A = 0; A < ages.size() - 1; A++) {
+                //                    size_t index = year * this->seasons * this->ages.size()
+                //                            + (season) * this->ages.size() + A;
+                //                    variable_t sum;
+                //                    for (int k = 0; k < ages.size() - 1; k++) {
+                //                        size_t index2 = year * this->seasons * this->ages.size()
+                //                                + (season) * this->ages.size() + A;
+                //                        variable_t sum;
+                //                        sum += F[i] * this->sum_selectivity[index2] + this->M[k];
+                //                    }
+                //                    sprb_f += this->maturity[A] * this->weight_at_catch_time[index] * mas::exp(
+                //                            -1.0 * this->catch_season_offset * F[i] * this->sum_selectivity[index] -
+                //                            this->spawning_season_offset * this->maturity[A] - sum);
+                //                }
+                //
+                //                variable_t sum;
+                //                for (int k = 0; k < ages.size() - 1; k++) {
+                //                    size_t index2 = year * this->seasons * this->ages.size()
+                //                            + (season) * this->ages.size() + A;
+                //                    variable_t sum;
+                //                    sum += F[i] * this->sum_selectivity[index2] + this->M[k];
+                //                }
+                //                size_t index = year * this->seasons * this->ages.size()
+                //                            + (season) * this->ages.size() + A;
+                //                sprb_f += this->maturity[A] * this->weight_at_catch_time[index] * mas::exp(
+                //                        -1.0 * this->catch_season_offset * F[i] * this->sum_selectivity[index] -
+                //                        this->spawning_season_offset * this->M[A] - sum)/ (1.0- mas::exp(-1.0*(F[i]*this->sum_selectivity[index]-this->M[A])));
 
                 std::valarray<variable_t> N_age(nages);
                 std::valarray<variable_t> N_age_spawn(nages);
@@ -2816,6 +2816,8 @@ namespace mas {
         int growth_id;
         REAL_T female_fraction_value = 0.5;
 
+        REAL_T SB0;
+
         //totals for this population
         std::vector<REAL_T> numbers_at_age;
         std::vector<REAL_T> survey_numbers_at_age;
@@ -3129,7 +3131,8 @@ namespace mas {
 
                 females[areas_list[a]->id].CalculateUnfishedSpawningBiomassPerRecruit();
                 females[areas_list[a]->id].CalculateUnfishedEquilSpawningBiomass();
-
+                this->SB0 =  females[areas_list[a]->id].SB0.GetValue();
+                
                 males[areas_list[a]->id].SB0 = females[areas_list[a]->id].SB0;
                 males[areas_list[a]->id].S0 = females[areas_list[a]->id].S0;
 
