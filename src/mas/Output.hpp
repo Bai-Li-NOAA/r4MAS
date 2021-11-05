@@ -1947,6 +1947,7 @@ namespace mas {
                     allocator);
             document.AddMember("metrics", metrics, allocator);
 
+            REAL_T maxgc = -9999;
             for (int i = 0; i < mas.info.estimated_parameters.size(); i++) {
                 rapidjson::Value parameter(rapidjson::kObjectType);
                 std::string n = mas.info.estimated_parameters[i]->GetName();
@@ -1961,8 +1962,16 @@ namespace mas {
                         mas.info.estimated_parameters[i]->info->id),
                         allocator);
                 estimated_parameters_array.PushBack(parameter, allocator);
+                
+                if(std::fabs(atl::Variable<REAL_T>::tape.Value(
+                        mas.info.estimated_parameters[i]->info->id)) > maxgc){
+                    maxgc = std::fabs(atl::Variable<REAL_T>::tape.Value(
+                        mas.info.estimated_parameters[i]->info->id));
+                }
 
             }
+            estimated_parameters.AddMember("maxgc", maxgc,
+                    allocator);
             estimated_parameters.AddMember("parameters", estimated_parameters_array,
                     allocator);
 
