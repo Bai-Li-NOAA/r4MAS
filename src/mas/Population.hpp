@@ -871,7 +871,7 @@ namespace mas {
 
         void CalculateInitialNumbersEquilibrium() {
 
-            variable init_f = 0.12;//???whats a good number to use
+            variable init_f = 0.0;//???whats a good number to use
             //note initial_numbers and initial_equilibrium_numbers vectors
             //are both size 3*ages.size()
 
