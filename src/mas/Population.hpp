@@ -895,16 +895,12 @@ namespace mas {
                 this->initial_equilibrium_numbers[a] =
                         this->initial_equilibrium_numbers[a - 1]
                         * mas::exp(static_cast<REAL_T> (-1.0) * (m));
-                sum += this->initial_equilibrium_numbers[a];
+//                sum += this->initial_equilibrium_numbers[a];
             }
 
             this->initial_equilibrium_numbers[this->ages.size() - 1] +=
-                    sum
-                    + (this->initial_equilibrium_numbers[this->initial_equilibrium_numbers.size()
-                    - 1] * mas::exp(static_cast<REAL_T> (-1.0) * (m)))
-                    / (1.0
-                    - mas::exp(
-                    static_cast<REAL_T> (-1.0) * (m)));
+                    sum + (this->initial_equilibrium_numbers[this->initial_equilibrium_numbers.size()
+                    - 1] * mas::exp(static_cast<REAL_T> (-1.0) * (m)))/ (1.0 - mas::exp(static_cast<REAL_T> (-1.0) * (m)));
         }
 
         void CalculateInitialNumbers() {
@@ -3131,8 +3127,8 @@ namespace mas {
 
                 females[areas_list[a]->id].CalculateUnfishedSpawningBiomassPerRecruit();
                 females[areas_list[a]->id].CalculateUnfishedEquilSpawningBiomass();
-                this->SB0 =  females[areas_list[a]->id].SB0.GetValue();
-                
+                this->SB0 = females[areas_list[a]->id].SB0.GetValue();
+
                 males[areas_list[a]->id].SB0 = females[areas_list[a]->id].SB0;
                 males[areas_list[a]->id].S0 = females[areas_list[a]->id].S0;
 
