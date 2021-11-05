@@ -1577,7 +1577,7 @@ namespace mas {
                         * (this->maturity[a] * this->sex_fraction_value);
                 spr_F0 += N0[a] * reprod[a];
                 selL[a] = this->sum_selectivity[index];
-                selZ[a] = this->Z[index];
+                selZ[a] = this->sum_selectivity[index];
                 M_age[a] = this->M[a].GetValue();
                 wgt[a] = this->weight_at_catch_time[index];
             }
@@ -1663,7 +1663,7 @@ namespace mas {
                 spr[i] = sum_product(N_age, reprod);
 
                 SSB_eq[i] = this->recruitment_model->CalculateEquilibriumSpawningBiomass(this->SB0, spr[i]);
-                R_eq[i] = this->recruitment_model->Evaluate(this->SB0, SSB_eq[i]);
+                R_eq[i] = this->recruitment_model->CalculateEquilibriumRecruitment(spr[i], spr_F0);//this->recruitment_model->Evaluate(this->SB0, SSB_eq[i]);
 
 
                 if (R_eq[i] < 0.0000001) {
