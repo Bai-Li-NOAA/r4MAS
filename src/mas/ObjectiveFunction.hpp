@@ -152,6 +152,7 @@ namespace mas {
 
             this->SetVarianceCovariance();
             mas_instance.Finalize();
+           
             if (compute_variance_for_derived_quantities) {
                 this->CalculateVarianceOfDerivedParameters();
             } else {
