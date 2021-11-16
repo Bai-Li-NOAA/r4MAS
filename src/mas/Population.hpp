@@ -168,7 +168,7 @@ namespace mas {
         std::vector<REAL_T> recruitment_variance;
         std::vector<REAL_T> F_over_F_msy_variance;
 
-        size_t initial_numbers_carryout = 1;
+        size_t initial_numbers_carryout = 3;
 
 
         std::vector<variable> srvivability;
